@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <SignAssembly>False</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+    <Authors>Stéphane Mitermite</Authors>
+    <Company>Stéphane Mitermite</Company>
+    <Description>Implementation of the Chromecast CASTV2 protocol.</Description>
+    <Copyright>Copyright © 2017 Stéphane Mitermite</Copyright>
+    <PackageLicenseUrl>https://github.com/kakone/GoogleCast/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/kakone/GoogleCast</PackageProjectUrl>
+    <PackageTags>google cast chromecast</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\netstandard1.4\GoogleCast.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="cast_channel.bat" />
+    <None Remove="cast_channel.proto" />
+    <None Remove="cast_channel.proto.bat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
+    <PackageReference Include="protobuf-net" Version="2.2.1" />
+    <PackageReference Include="System.Net.Security" Version="4.3.1" />
+    <PackageReference Include="System.Net.Sockets" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+    <PackageReference Include="Zeroconf" Version="2.8.0" />
+  </ItemGroup>
+
+</Project>

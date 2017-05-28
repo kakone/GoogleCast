@@ -1,0 +1,38 @@
+﻿<Window x:Class="GoogleCast.SampleApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="GoogleCast" Height="160" Width="784"
+        ResizeMode="CanResizeWithGrip"
+        DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox ItemsSource="{Binding Receivers}" DisplayMemberPath="FriendlyName" SelectedValue="{Binding SelectedReceiver, Mode=TwoWay}" IsEnabled="{Binding IsLoaded}" Margin="4" />
+            <Button Grid.Column="1" Margin="4" Padding="4" Width="64" Command="{Binding RefreshCommand}">Refresh</Button>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Margin="4" Text="{Binding Link, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
+            <Button Grid.Column="1" Margin="4" Padding="4" Width="64" Command="{Binding PlayCommand}">Play</Button>
+            <Button Grid.Column="2" Margin="4" Padding="4" Width="64" Command="{Binding PauseCommand}">Pause</Button>
+            <Button Grid.Column="3" Margin="4" Padding="4" Width="64" Command="{Binding StopCommand}">Stop</Button>
+        </Grid>
+        <TextBlock Margin="4" Grid.Row="2" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PlayerState}" />
+    </Grid>
+</Window>
