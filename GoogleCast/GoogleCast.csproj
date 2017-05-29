@@ -7,12 +7,15 @@
     <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
     <Authors>Stéphane Mitermite</Authors>
     <Company>Stéphane Mitermite</Company>
-    <Description>Implementation of the Chromecast CASTV2 protocol.</Description>
+    <Description>Implementation of the Google Cast protocol (.NET Standard 1.4 library).</Description>
     <Copyright>Copyright © 2017 Stéphane Mitermite</Copyright>
     <PackageLicenseUrl>https://github.com/kakone/GoogleCast/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/kakone/GoogleCast</PackageProjectUrl>
     <PackageTags>google cast chromecast</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

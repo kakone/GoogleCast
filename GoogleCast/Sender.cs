@@ -1,5 +1,6 @@
 ﻿using GoogleCast.Channels;
 using GoogleCast.Messages;
+using GoogleCast.Models.Receiver;
 using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf;
 using System;
@@ -295,6 +296,36 @@ namespace GoogleCast
                 SourceId = DefaultIdentifiers.SENDER_ID,
                 DestinationId = destinationId
             };
+        }
+
+        /// <summary>
+        /// Launches an application
+        /// </summary>
+        /// <typeparam name="TAppChannel">application channel type</typeparam>
+        /// <returns>receiver status</returns>
+        public async Task<ReceiverStatus> LaunchAsync<TAppChannel>() where TAppChannel : IApplicationChannel
+        {
+            return await LaunchAsync(GetChannel<TAppChannel>());
+        }
+
+        /// <summary>
+        /// Launches an application
+        /// </summary>
+        /// <param name="applicationChannel">application channel</param>
+        /// <returns>receiver status</returns>
+        public async Task<ReceiverStatus> LaunchAsync(IApplicationChannel applicationChannel)
+        {
+            return await LaunchAsync(applicationChannel.ApplicationId);
+        }
+
+        /// <summary>
+        /// Launches an application
+        /// </summary>
+        /// <param name="applicationId">application identifier</param>
+        /// <returns>receiver status</returns>
+        public async Task<ReceiverStatus> LaunchAsync(string applicationId)
+        {
+            return await GetChannel<IReceiverChannel>().LaunchAsync(applicationId);
         }
 
         /// <summary>

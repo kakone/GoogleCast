@@ -197,8 +197,9 @@ namespace GoogleCast.SampleApp
                     {
                         var sender = Sender;
                         await sender.ConnectAsync(selectedReceiver);
-                        await sender.GetChannel<IReceiverChannel>().LaunchAsync("CC1AD845");
-                        await sender.GetChannel<IMediaChannel>().LoadAsync(new Media() { ContentId = link, });
+                        var mediaChannel = sender.GetChannel<IMediaChannel>();
+                        await sender.LaunchAsync(mediaChannel);
+                        await mediaChannel.LoadAsync(new Media() { ContentId = link, });
                         IsInitialized = true;
                     }
                 }, c => c.PlayAsync());

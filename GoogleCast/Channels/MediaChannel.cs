@@ -21,6 +21,11 @@ namespace GoogleCast.Channels
         {
         }
 
+        /// <summary>
+        /// Gets the application identifier
+        /// </summary>
+        public string ApplicationId { get; } = "CC1AD845";
+
         private IReceiverChannel ReceiverChannel
         {
             get { return Sender.GetChannel<IReceiverChannel>(); }

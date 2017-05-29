@@ -1,5 +1,6 @@
 ﻿using GoogleCast.Channels;
 using GoogleCast.Messages;
+using GoogleCast.Models.Receiver;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,6 +34,27 @@ namespace GoogleCast
         /// Disconnects
         /// </summary>
         Task DisconnectAsync();
+
+        /// <summary>
+        /// Launches an application
+        /// </summary>
+        /// <typeparam name="TAppChannel">application channel type</typeparam>
+        /// <returns>receiver status</returns>
+        Task<ReceiverStatus> LaunchAsync<TAppChannel>() where TAppChannel : IApplicationChannel;
+
+        /// <summary>
+        /// Launches an application
+        /// </summary>
+        /// <param name="applicationChannel">application channel</param>
+        /// <returns>receiver status</returns>
+        Task<ReceiverStatus> LaunchAsync(IApplicationChannel applicationChannel);
+
+        /// <summary>
+        /// Launches an application
+        /// </summary>
+        /// <param name="applicationId">application identifier</param>
+        /// <returns>receiver status</returns>
+        Task<ReceiverStatus> LaunchAsync(string applicationId);
 
         /// <summary>
         /// Sends a message

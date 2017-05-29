@@ -7,7 +7,7 @@ namespace GoogleCast.Channels
     /// <summary>
     /// Interface for the media channel
     /// </summary>
-    public interface IMediaChannel : IStatusChannel<IEnumerable<MediaStatus>>
+    public interface IMediaChannel : IStatusChannel<IEnumerable<MediaStatus>>, IApplicationChannel
     {
         /// <summary>
         /// Loads a media
