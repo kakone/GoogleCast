@@ -14,9 +14,10 @@ var sender = new Sender();
 // Connect to the Chromecast
 await sender.ConnectAsync(receiver);
 // Launch the default media receiver application
-await sender.GetChannel<IReceiverChannel>().LaunchAsync("CC1AD845");
+var mediaChannel = sender.GetChannel<IMediaChannel>();
+await sender.LaunchAsync(mediaChannel);
 // Load and play Big Buck Bunny video
-var mediaStatus = await sender.GetChannel<IMediaChannel>().LoadAsync(
+var mediaStatus = await mediaChannel.LoadAsync(
     new Media() { ContentId = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" });
 ```
 
