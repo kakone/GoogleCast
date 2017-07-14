@@ -13,8 +13,15 @@ namespace GoogleCast.Channels
         /// <summary>
         /// Initialization
         /// </summary>
+        protected Channel()
+        {
+        }
+
+        /// <summary>
+        /// Initialization
+        /// </summary>
         /// <param name="ns">namespace</param>
-        public Channel(string ns)
+        protected Channel(string ns)
         {
             Namespace = $"{BASE_NAMESPACE}.{ns}";
         }
@@ -27,7 +34,7 @@ namespace GoogleCast.Channels
         /// <summary>
         /// Gets the full namespace
         /// </summary>
-        public string Namespace { get; }
+        public string Namespace { get; protected set; }
 
         /// <summary>
         /// Sends a message

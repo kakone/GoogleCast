@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace GoogleCast.Messages
 {
@@ -14,7 +16,23 @@ namespace GoogleCast.Messages
         public Message()
         {
             var type = GetType().Name;
-            Type = type.Substring(0, type.LastIndexOf(nameof(Message))).ToUpper();
+            var firstCharacter = true;
+            Type = String.Concat(type.Substring(0, type.LastIndexOf(nameof(Message))).Select(c =>
+                {
+                    if (firstCharacter)
+                    {
+                        firstCharacter = false;
+                    }
+                    else
+                    {
+                        if (Char.IsUpper(c))
+                        {
+                            return $"_{c}";
+                        }
+                    }
+
+                    return Char.ToUpper(c).ToString();
+                }));
         }
 
         /// <summary>

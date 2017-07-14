@@ -33,26 +33,32 @@ namespace GoogleCast
         /// <summary>
         /// Initializes a new instance of Sender class
         /// </summary>
-        public Sender()
+        public Sender() : this(ServiceCollection.Default)
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.RegisterServices();
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            Init(serviceProvider.GetService<IMessageTypesManager>(), serviceProvider.GetServices<IChannel>());
         }
 
         /// <summary>
         /// Initializes a new instance of Sender class
         /// </summary>
-        /// <param name="messageTypesManager">message types manager</param>
-        /// <param name="channels">the channels collection</param>
-        public Sender(IMessageTypesManager messageTypesManager, IEnumerable<IChannel> channels)
+        /// <param name="serviceCollection">collection of service descriptors</param>
+        public Sender(IServiceCollection serviceCollection)
         {
-            Init(messageTypesManager, channels);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            Init(serviceProvider.GetServices<IChannel>(), serviceProvider.GetServices<IMessage>());
+        }
+
+        /// <summary>
+        /// Initializes a new instance of Sender class
+        /// </summary>
+        /// <param name="channels">the channels collection</param>
+        /// <param name="messages">messages that can be received</param>
+        public Sender(IEnumerable<IChannel> channels, IEnumerable<IMessage> messages)
+        {
+            Init(channels, messages);
         }
 
         private IReceiver Receiver { get; set; }
-        private IMessageTypesManager MessageTypesManager { get; set; }
+        private IDictionary<string, Type> MessageTypes { get; set; }
         private IEnumerable<IChannel> Channels { get; set; }
         private Stream NetworkStream { get; set; }
         private TcpClient TcpClient { get; set; }
@@ -61,9 +67,9 @@ namespace GoogleCast
         private ConcurrentDictionary<int, object> WaitingTasks { get; } = new ConcurrentDictionary<int, object>();
         private TaskCompletionSource<bool> ReceiveTcs { get; set; }
 
-        private void Init(IMessageTypesManager messageTypesManager, IEnumerable<IChannel> channels)
+        private void Init(IEnumerable<IChannel> channels, IEnumerable<IMessage> messages)
         {
-            MessageTypesManager = messageTypesManager;
+            MessageTypes = messages.Where(t => !String.IsNullOrEmpty(t.Type)).ToDictionary(m => m.Type, m => m.GetType());
             Channels = channels;
             foreach (var channel in channels)
             {
@@ -188,8 +194,7 @@ namespace GoogleCast
                         if (channel != null)
                         {
                             var message = JsonSerializer.Deserialize<MessageWithId>(payload);
-                            var type = MessageTypesManager.GetMessageType(message.Type);
-                            if (type != null)
+                            if (MessageTypes.TryGetValue(message.Type, out Type type))
                             {
                                 try
                                 {
