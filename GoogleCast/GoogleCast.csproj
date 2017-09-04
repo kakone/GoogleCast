@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.4;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
     <Authors>Stéphane Mitermite</Authors>
     <Company>Stéphane Mitermite</Company>
-    <Description>Implementation of the Google Cast protocol (.NET Standard 1.4/2.0 library).</Description>
+    <Description>Implementation of the Google Cast protocol (.NET Standard 2.0 library).</Description>
     <Copyright>Copyright © 2017 Stéphane Mitermite</Copyright>
     <PackageLicenseUrl>https://github.com/kakone/GoogleCast/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/kakone/GoogleCast</PackageProjectUrl>
@@ -20,7 +20,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\$(TargetFramework)\GoogleCast.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\GoogleCast.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,21 +30,14 @@
   </ItemGroup>
 
   <ItemGroup>
-  <PackageReference Include="protobuf-net" Version="2.3.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="protobuf-net" Version="2.3.2" />
     <PackageReference Include="System.Net.Security" Version="4.3.1" />
     <PackageReference Include="System.Net.Sockets" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
     <PackageReference Include="Zeroconf" Version="2.9.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.4'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
   </ItemGroup>
 
 </Project>
