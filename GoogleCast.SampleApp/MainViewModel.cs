@@ -212,14 +212,14 @@ namespace GoogleCast.SampleApp
             }
         }
 
-        private async Task SendChanneCommandAsync<TChannel>(bool condition, Func<TChannel, Task> action, Func<TChannel, Task> otherwise) where TChannel : IChannel
+        private async Task SendChannelCommandAsync<TChannel>(bool condition, Func<TChannel, Task> action, Func<TChannel, Task> otherwise) where TChannel : IChannel
         {
             await InvokeAsync<TChannel>(condition ? action : otherwise);
         }
 
         private async Task PlayAsync()
         {
-            await SendChanneCommandAsync<IMediaChannel>(!IsInitialized || IsStopped,
+            await SendChannelCommandAsync<IMediaChannel>(!IsInitialized || IsStopped,
                 async c =>
                 {
                     var selectedReceiver = SelectedReceiver;
@@ -238,12 +238,12 @@ namespace GoogleCast.SampleApp
 
         private async Task PauseAsync()
         {
-            await SendChanneCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.PauseAsync());
+            await SendChannelCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.PauseAsync());
         }
 
         private async Task StopAsync()
         {
-            await SendChanneCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.StopAsync());
+            await SendChannelCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.StopAsync());
         }
 
         private async Task RefreshAsync()
@@ -259,7 +259,7 @@ namespace GoogleCast.SampleApp
 
 		private async Task SetVolumeAsync()
 		{
-			await SendChanneCommandAsync<IReceiverChannel>(IsStopped, null, async c => await c.SetVolumeAsync(float.Parse(Volume), Muted));
+			await SendChannelCommandAsync<IReceiverChannel>(IsStopped, null, async c => await c.SetVolumeAsync(float.Parse(Volume), Muted));
 		}
 
         private void MediaChannelStatusChanged(object sender, EventArgs e)
