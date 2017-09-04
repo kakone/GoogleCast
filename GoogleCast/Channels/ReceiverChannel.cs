@@ -49,7 +49,7 @@ namespace GoogleCast.Channels
         /// <returns>receiver status</returns>
         public async Task<ReceiverStatus> LaunchAsync(string applicationId)
         {
-            return (await SendAsync<ReceiverStatusMessage>(new LaunchMessage() { ApplicationId = applicationId })).Status;
+			return (await SendAsync<ReceiverStatusMessage>(new LaunchMessage() { ApplicationId = applicationId })).Status;
         }
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace GoogleCast.Channels
 		{
 			return (await SendAsync<ReceiverStatusMessage>(
 				new SetVolumeMessage() {
-					Volume = new Models.Volume() { Level = level, IsMuted = muted }
+					Volume = muted ? new Models.Volume() { IsMuted = true } : new Models.Volume() { Level = level, IsMuted = false }
 				}
 			)).Status;
 		}

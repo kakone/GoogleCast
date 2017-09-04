@@ -1,4 +1,5 @@
 ﻿using GoogleCast.Models.Receiver;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GoogleCast.Channels
@@ -6,7 +7,7 @@ namespace GoogleCast.Channels
     /// <summary>
     /// Interface for the receiver channel
     /// </summary>
-    public interface IReceiverChannel : IChannel
+    public interface IReceiverChannel : IStatusChannel<ReceiverStatus>
     {
         /// <summary>
         /// Launches an application

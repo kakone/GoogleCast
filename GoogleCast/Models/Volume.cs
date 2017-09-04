@@ -11,8 +11,8 @@ namespace GoogleCast.Models
         /// <summary>
         /// Gets or sets the volume level
         /// </summary>
-        [DataMember(Name = "level")]
-        public float Level { get; set; }
+        [DataMember(Name = "level", EmitDefaultValue = false)]
+        public float? Level { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the audio is muted
