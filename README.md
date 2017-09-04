@@ -1,5 +1,5 @@
 # GoogleCast
-Implementation of the Google Cast protocol (.NET Standard 2.0 library).
+Implementation of the Google Cast protocol (.NET Standard 1.4/2.0 library).
 
 This [documentation](https://github.com/thibauts/node-castv2#protocol-description) was really helpful to understand the protocol.
 
