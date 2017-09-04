@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid>
@@ -33,6 +34,18 @@
             <Button Grid.Column="2" Margin="4" Padding="4" Width="64" Command="{Binding PauseCommand}">Pause</Button>
             <Button Grid.Column="3" Margin="4" Padding="4" Width="64" Command="{Binding StopCommand}">Stop</Button>
         </Grid>
-        <TextBlock Margin="4" Grid.Row="2" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PlayerState}" />
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label VerticalAlignment="Center">Volume</Label>
+            <Slider Grid.Column="1"  Margin="4" Value="{Binding Volume, Mode=TwoWay}" Maximum="1" SmallChange="0.05" LargeChange="0.2" VerticalAlignment="Center"
+                    IsEnabled="{Binding AreButtonsEnabled}"/>
+            <CheckBox Grid.Column="2" Margin="4" IsChecked="{Binding IsMuted, Mode=TwoWay}" VerticalAlignment="Center"
+                      IsEnabled="{Binding AreButtonsEnabled}">Mute</CheckBox>
+        </Grid>
+        <TextBlock Grid.Row="3" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PlayerState}" />
     </Grid>
 </Window>

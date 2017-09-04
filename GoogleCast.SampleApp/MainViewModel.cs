@@ -25,9 +25,10 @@ namespace GoogleCast.SampleApp
             DeviceLocator = deviceLocator;
             Sender = sender;
             sender.GetChannel<IMediaChannel>().StatusChanged += MediaChannelStatusChanged;
-            PlayCommand = new RelayCommand(async () => await Try(PlayAsync), () => ButtonsEnabled);
-            PauseCommand = new RelayCommand(async () => await Try(PauseAsync), () => ButtonsEnabled);
-            StopCommand = new RelayCommand(async () => await Try(StopAsync), () => ButtonsEnabled);
+            sender.GetChannel<IReceiverChannel>().StatusChanged += ReceiverChannelStatusChanged;
+            PlayCommand = new RelayCommand(async () => await Try(PlayAsync), () => AreButtonsEnabled);
+            PauseCommand = new RelayCommand(async () => await Try(PauseAsync), () => AreButtonsEnabled);
+            StopCommand = new RelayCommand(async () => await Try(StopAsync), () => AreButtonsEnabled);
             RefreshCommand = new RelayCommand(async () => await Try(RefreshAsync), () => IsLoaded);
 
             if (!IsInDesignMode)
@@ -93,7 +94,7 @@ namespace GoogleCast.SampleApp
         /// <summary>
         /// Gets a value indicating whether the Play, Pause and Stop buttons must be enabled or not
         /// </summary>
-        public bool ButtonsEnabled
+        public bool AreButtonsEnabled
         {
             get { return IsLoaded && SelectedReceiver != null && !String.IsNullOrWhiteSpace(Link); }
         }
@@ -127,6 +128,46 @@ namespace GoogleCast.SampleApp
             }
         }
 
+        private bool _isMuted;
+        /// <summary>
+        /// Gets or sets a value indicating whether the audio is muted
+        /// </summary>
+        public bool IsMuted
+        {
+            get { return _isMuted; }
+            set
+            {
+                if (_isMuted != value)
+                {
+                    _isMuted = value;
+                    RaisePropertyChanged(nameof(IsMuted));
+                    Task.Run(SetIsMutedAsync);
+                }
+            }
+        }
+
+        public float _volume = 1;
+        /// <summary>
+        /// Gets or sets the volume
+        /// </summary>
+        public float Volume
+        {
+            get { return _volume; }
+            set
+            {
+                if (_volume != value)
+                {
+                    if (value > _volume)
+                    {
+                        IsMuted = false;
+                    }
+                    _volume = value;
+                    RaisePropertyChanged(nameof(Volume));
+                    Task.Run(SetVolumeAsync);
+                }
+            }
+        }
+
         private bool IsStopped
         {
             get
@@ -155,6 +196,7 @@ namespace GoogleCast.SampleApp
 
         private void RaiseButtonsCommandsCanExecuteChanged()
         {
+            RaisePropertyChanged(nameof(AreButtonsEnabled));
             PlayCommand.RaiseCanExecuteChanged();
             PauseCommand.RaiseCanExecuteChanged();
             StopCommand.RaiseCanExecuteChanged();
@@ -173,22 +215,22 @@ namespace GoogleCast.SampleApp
             }
         }
 
-        private async Task InvokeAsync(Func<IMediaChannel, Task> action)
+        private async Task InvokeAsync<TChannel>(Func<TChannel, Task> action) where TChannel : IChannel
         {
             if (action != null)
             {
-                await action.Invoke(Sender.GetChannel<IMediaChannel>());
+                await action.Invoke(Sender.GetChannel<TChannel>());
             }
         }
 
-        private async Task SendMediaCommandAsync(bool condition, Func<IMediaChannel, Task> action, Func<IMediaChannel, Task> otherwise)
+        private async Task SendChannelCommandAsync<TChannel>(bool condition, Func<TChannel, Task> action, Func<TChannel, Task> otherwise) where TChannel : IChannel
         {
-            await InvokeAsync(condition ? action : otherwise);
+            await InvokeAsync<TChannel>(condition ? action : otherwise);
         }
 
         private async Task PlayAsync()
         {
-            await SendMediaCommandAsync(!IsInitialized || IsStopped,
+            await SendChannelCommandAsync<IMediaChannel>(!IsInitialized || IsStopped,
                 async c =>
                 {
                     var selectedReceiver = SelectedReceiver;
@@ -207,12 +249,12 @@ namespace GoogleCast.SampleApp
 
         private async Task PauseAsync()
         {
-            await SendMediaCommandAsync(IsStopped, null, async c => await c.PauseAsync());
+            await SendChannelCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.PauseAsync());
         }
 
         private async Task StopAsync()
         {
-            await SendMediaCommandAsync(IsStopped, null, async c => await c.StopAsync());
+            await SendChannelCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.StopAsync());
         }
 
         private async Task RefreshAsync()
@@ -226,6 +268,16 @@ namespace GoogleCast.SampleApp
             });
         }
 
+        private async Task SetVolumeAsync()
+        {
+            await SendChannelCommandAsync<IReceiverChannel>(IsStopped, null, async c => await c.SetVolumeAsync(Volume));
+        }
+
+        private async Task SetIsMutedAsync()
+        {
+            await SendChannelCommandAsync<IReceiverChannel>(IsStopped, null, async c => await c.SetIsMutedAsync(IsMuted));
+        }
+
         private void MediaChannelStatusChanged(object sender, EventArgs e)
         {
             var status = ((IMediaChannel)sender).Status?.FirstOrDefault();
@@ -235,6 +287,22 @@ namespace GoogleCast.SampleApp
                 playerState = status.IdleReason;
             }
             PlayerState = playerState;
+        }
+
+        private void ReceiverChannelStatusChanged(object sender, EventArgs e)
+        {
+            if (!IsInitialized)
+            {
+                var status = ((IReceiverChannel)sender).Status;
+                if (status.Volume.Level != null)
+                {
+                    Volume = (float)status.Volume.Level;
+                }
+                if (status.Volume.IsMuted != null)
+                {
+                    IsMuted = (bool)status.Volume.IsMuted;
+                }
+            }
         }
     }
 }
