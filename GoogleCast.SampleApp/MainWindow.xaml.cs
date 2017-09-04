@@ -14,5 +14,5 @@ namespace GoogleCast.SampleApp
         {
             InitializeComponent();
         }
-	}
+    }
 }

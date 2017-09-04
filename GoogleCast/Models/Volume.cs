@@ -17,8 +17,8 @@ namespace GoogleCast.Models
         /// <summary>
         /// Gets or sets a value indicating whether the audio is muted
         /// </summary>
-        [DataMember(Name = "muted")]
-        public bool IsMuted { get; set; }
+        [DataMember(Name = "muted", EmitDefaultValue = false)]
+        public bool? IsMuted { get; set; }
 
         /// <summary>
         /// Gets or sets the step interval

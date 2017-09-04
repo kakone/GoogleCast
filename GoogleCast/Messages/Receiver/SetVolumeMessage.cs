@@ -1,15 +1,18 @@
-﻿using System;
+﻿using GoogleCast.Models;
 using System.Runtime.Serialization;
 
 namespace GoogleCast.Messages.Receiver
 {
-	/// <summary>
-	/// Set Volume Message
-	/// </summary>
-	[DataContract]
-	class SetVolumeMessage : MessageWithId
-	{
-		[DataMember(Name = "volume")]
-		public Models.Volume Volume { get; set; }
+    /// <summary>
+    /// Volume Message
+    /// </summary>
+    [DataContract]
+    class SetVolumeMessage : MessageWithId
+    {
+        /// <summary>
+        /// Gets or sets the volume
+        /// </summary>
+        [DataMember(Name = "volume")]
+        public Volume Volume { get; set; }
     }
 }

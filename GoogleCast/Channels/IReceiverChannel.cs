@@ -1,5 +1,4 @@
 ﻿using GoogleCast.Models.Receiver;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GoogleCast.Channels
@@ -23,13 +22,18 @@ namespace GoogleCast.Channels
         /// <returns>an application object</returns>
         Task<Application> EnsureConnection(string ns);
 
+        /// <summary>
+        /// Sets the volume
+        /// </summary>
+        /// <param name="level">volume level (0.0 to 1.0)</param>
+        /// <returns>receiver status</returns>
+        Task<ReceiverStatus> SetVolumeAsync(float level);
 
-		/// <summary>
-		/// Sets the volume
-		/// </summary>
-		/// <param name="level">volume level (0.0 to 1.0)</param>
-		/// <param name="muted">muted state</param>
-		/// <returns>receiver status</returns>
-		Task<ReceiverStatus> SetVolumeAsync(float level, bool muted);
+        /// <summary>
+        /// Sets a value indicating whether the audio should be muted
+        /// </summary>
+        /// <param name="isMuted">true if audio should be muted; otherwise, false</param>
+        /// <returns>receiver status</returns>
+        Task<ReceiverStatus> SetIsMutedAsync(bool isMuted);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GoogleCast.Messages.Receiver;
+using GoogleCast.Models;
 using GoogleCast.Models.Receiver;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,30 +50,48 @@ namespace GoogleCast.Channels
         /// <returns>receiver status</returns>
         public async Task<ReceiverStatus> LaunchAsync(string applicationId)
         {
-			return (await SendAsync<ReceiverStatusMessage>(new LaunchMessage() { ApplicationId = applicationId })).Status;
+            return (await SendAsync<ReceiverStatusMessage>(new LaunchMessage() { ApplicationId = applicationId })).Status;
         }
 
-		/// <summary>
-		/// Sets the volume
-		/// </summary>
-		/// <param name="level">volume level (0.0 to 1.0)</param>
-		/// <param name="muted">muted state</param>
-		/// <returns>receiver status</returns>
-		public async Task<ReceiverStatus> SetVolumeAsync(float level, bool muted)
-		{
-			return (await SendAsync<ReceiverStatusMessage>(
-				new SetVolumeMessage() {
-					Volume = muted ? new Models.Volume() { IsMuted = true } : new Models.Volume() { Level = level, IsMuted = false }
-				}
-			)).Status;
-		}
+        /// <summary>
+        /// Sets the volume
+        /// </summary>
+        /// <param name="level">volume level (0.0 to 1.0)</param>
+        /// <returns>receiver status</returns>
+        public async Task<ReceiverStatus> SetVolumeAsync(float level)
+        {
+            return await SetVolumeAsync(level, null);
+        }
 
-		/// <summary>
-		/// Checks the connection is well established
-		/// </summary>
-		/// <param name="ns">namespace</param>
-		/// <returns>an application object</returns>
-		public async Task<Application> EnsureConnection(string ns)
+        /// <summary>
+        /// Sets a value indicating whether the audio should be muted
+        /// </summary>
+        /// <param name="isMuted">true if audio should be muted; otherwise, false</param>
+        /// <returns>receiver status</returns>
+        public async Task<ReceiverStatus> SetIsMutedAsync(bool isMuted)
+        {
+            return await SetVolumeAsync(null, isMuted);
+        }
+
+        private async Task<ReceiverStatus> SetVolumeAsync(float? level, bool? isMuted)
+        {
+            return (await SendAsync<ReceiverStatusMessage>(
+                new SetVolumeMessage()
+                {
+                    Volume = new Volume()
+                    {
+                        Level = level,
+                        IsMuted = isMuted,
+                    }
+                })).Status;
+        }
+
+        /// <summary>
+        /// Checks the connection is well established
+        /// </summary>
+        /// <param name="ns">namespace</param>
+        /// <returns>an application object</returns>
+        public async Task<Application> EnsureConnection(string ns)
         {
             if (Status == null)
             {
