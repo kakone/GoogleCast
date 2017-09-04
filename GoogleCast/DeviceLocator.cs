@@ -19,15 +19,17 @@ namespace GoogleCast
         /// <returns>a collection of receivers</returns>
         public async Task<IEnumerable<Receiver>> FindReceiversAsync()
         {
-            return (await ZeroconfResolver.ResolveAsync(PROTOCOL)).Select(c =>
-            {
-                var service = c.Services[PROTOCOL];
-                return new Receiver()
-                {
-                    FriendlyName = service.Properties[0]["fn"],
-                    IPEndPoint = new IPEndPoint(IPAddress.Parse(c.IPAddress), service.Port)
-                };
-            });
-        }
+			var receivers = new List<Receiver>();
+			await ZeroconfResolver.ResolveAsync(PROTOCOL, callback: c =>
+			{
+				var service = c.Services[PROTOCOL];
+				receivers.Add(new Receiver()
+				{
+					FriendlyName = service.Properties[0]["fn"],
+					IPEndPoint = new IPEndPoint(IPAddress.Parse(c.IPAddress), service.Port)
+				});
+			});
+			return receivers;
+		}
     }
 }
