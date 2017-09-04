@@ -25,12 +25,16 @@ namespace GoogleCast.SampleApp
             DeviceLocator = deviceLocator;
             Sender = sender;
             sender.GetChannel<IMediaChannel>().StatusChanged += MediaChannelStatusChanged;
+			sender.GetChannel<IReceiverChannel>().StatusChanged += ReceiverChannelStatusChanged;
             PlayCommand = new RelayCommand(async () => await Try(PlayAsync), () => ButtonsEnabled);
             PauseCommand = new RelayCommand(async () => await Try(PauseAsync), () => ButtonsEnabled);
             StopCommand = new RelayCommand(async () => await Try(StopAsync), () => ButtonsEnabled);
             RefreshCommand = new RelayCommand(async () => await Try(RefreshAsync), () => IsLoaded);
+			SetVolumeCommand = new RelayCommand(async () => await Try(SetVolumeAsync), () => ButtonsEnabled);
+			Volume = "0.0";
+			Muted = false;
 
-            if (!IsInDesignMode)
+			if (!IsInDesignMode)
             {
                 Task.Run(RefreshAsync);
             }
@@ -127,6 +131,28 @@ namespace GoogleCast.SampleApp
             }
         }
 
+		private bool _muted;
+		public bool Muted
+		{
+			get { return _muted; }
+			set
+			{
+				_muted = value;
+				RaisePropertyChanged(nameof(Muted));
+			}
+		}
+
+		public string _volume;
+		public string Volume
+		{
+			get { return _volume; }
+			set
+			{
+				_volume = value;
+				RaisePropertyChanged(nameof(Volume));
+			}
+		}
+
         private bool IsStopped
         {
             get
@@ -152,13 +178,18 @@ namespace GoogleCast.SampleApp
         /// Gets the refresh command
         /// </summary>
         public RelayCommand RefreshCommand { get; }
+		/// <summary>
+		/// Gets the set volume command
+		/// </summary>
+		public RelayCommand SetVolumeCommand { get; }
 
-        private void RaiseButtonsCommandsCanExecuteChanged()
+		private void RaiseButtonsCommandsCanExecuteChanged()
         {
             PlayCommand.RaiseCanExecuteChanged();
             PauseCommand.RaiseCanExecuteChanged();
             StopCommand.RaiseCanExecuteChanged();
-        }
+			SetVolumeCommand.RaiseCanExecuteChanged();
+		}
 
         private async Task Try(Func<Task> action)
         {
@@ -173,22 +204,22 @@ namespace GoogleCast.SampleApp
             }
         }
 
-        private async Task InvokeAsync(Func<IMediaChannel, Task> action)
+        private async Task InvokeAsync<TChannel>(Func<TChannel, Task> action) where TChannel : IChannel
         {
             if (action != null)
             {
-                await action.Invoke(Sender.GetChannel<IMediaChannel>());
+                await action.Invoke(Sender.GetChannel<TChannel>());
             }
         }
 
-        private async Task SendMediaCommandAsync(bool condition, Func<IMediaChannel, Task> action, Func<IMediaChannel, Task> otherwise)
+        private async Task SendChanneCommandAsync<TChannel>(bool condition, Func<TChannel, Task> action, Func<TChannel, Task> otherwise) where TChannel : IChannel
         {
-            await InvokeAsync(condition ? action : otherwise);
+            await InvokeAsync<TChannel>(condition ? action : otherwise);
         }
 
         private async Task PlayAsync()
         {
-            await SendMediaCommandAsync(!IsInitialized || IsStopped,
+            await SendChanneCommandAsync<IMediaChannel>(!IsInitialized || IsStopped,
                 async c =>
                 {
                     var selectedReceiver = SelectedReceiver;
@@ -207,12 +238,12 @@ namespace GoogleCast.SampleApp
 
         private async Task PauseAsync()
         {
-            await SendMediaCommandAsync(IsStopped, null, async c => await c.PauseAsync());
+            await SendChanneCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.PauseAsync());
         }
 
         private async Task StopAsync()
         {
-            await SendMediaCommandAsync(IsStopped, null, async c => await c.StopAsync());
+            await SendChanneCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.StopAsync());
         }
 
         private async Task RefreshAsync()
@@ -226,6 +257,11 @@ namespace GoogleCast.SampleApp
             });
         }
 
+		private async Task SetVolumeAsync()
+		{
+			await SendChanneCommandAsync<IReceiverChannel>(IsStopped, null, async c => await c.SetVolumeAsync(float.Parse(Volume), Muted));
+		}
+
         private void MediaChannelStatusChanged(object sender, EventArgs e)
         {
             var status = ((IMediaChannel)sender).Status?.FirstOrDefault();
@@ -236,5 +272,12 @@ namespace GoogleCast.SampleApp
             }
             PlayerState = playerState;
         }
-    }
+
+		private void ReceiverChannelStatusChanged(object sender, EventArgs e)
+		{
+			var status = ((IReceiverChannel)sender).Status;
+			Volume = status.Volume.Level.ToString();
+			Muted = status.Volume.IsMuted;
+		}
+	}
 }
