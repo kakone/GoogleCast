@@ -21,5 +21,14 @@ namespace GoogleCast.Channels
         /// <param name="ns">namespace</param>
         /// <returns>an application object</returns>
         Task<Application> EnsureConnection(string ns);
+
+
+		/// <summary>
+		/// Sets the volume
+		/// </summary>
+		/// <param name="level">volume level (0.0 to 1.0)</param>
+		/// <param name="muted">muted state</param>
+		/// <returns>receiver status</returns>
+		Task<ReceiverStatus> SetVolumeAsync(float level, bool muted);
     }
 }
