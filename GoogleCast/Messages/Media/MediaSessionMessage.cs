@@ -11,7 +11,7 @@ namespace GoogleCast.Messages.Media
         /// <summary>
         /// Gets or sets the media session identifier
         /// </summary>
-        [DataMember(Name = "mediaSessionId")]
-        public long MediaSessionId { get; set; }
+        [DataMember(Name = "mediaSessionId", EmitDefaultValue = false)]
+        public long? MediaSessionId { get; set; }
     }
 }

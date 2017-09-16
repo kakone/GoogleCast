@@ -1,6 +1,9 @@
-﻿using GoogleCast.Messages.Receiver;
+﻿using GoogleCast.Messages.Media;
+using GoogleCast.Messages.Receiver;
 using GoogleCast.Models;
+using GoogleCast.Models.Media;
 using GoogleCast.Models.Receiver;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -110,6 +113,36 @@ namespace GoogleCast.Channels
         private void Disconnected(object sender, System.EventArgs e)
         {
             IsConnected = false;
+        }
+
+        /// <summary>
+        /// Retrieves the media status.
+        /// </summary>
+        /// <returns>media status</returns>
+        public async Task<ReceiverStatus> GetStatusAsync()
+        {
+            return (await SendAsync<ReceiverStatusMessage>(new GetStatusMessage())).Status;
+        }
+
+        /// <summary>
+        /// Stops the media
+        /// </summary>
+        /// <returns>media status</returns>
+        public async Task StopAsync()
+        {
+            // we are reconnecting to an existing session
+            if (Status == null)
+            {
+                // after this succeeds we have the session
+                await GetStatusAsync();
+            }
+            var mediaChannel = Sender.GetChannel<IMediaChannel>();
+            var application = Status.Applications.First(a => a.Namespaces.Any(n => n.Name == mediaChannel.Namespace));
+            if (application != null)
+            {
+                // if the media application exists, we can stop it
+                await SendAsync(new StopMessage() { SessionId = application.SessionId });
+            }
         }
     }
 }

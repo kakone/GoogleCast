@@ -8,5 +8,10 @@ namespace GoogleCast.Messages.Media
     [DataContract]
     class StopMessage : MediaSessionMessage
     {
+        /// <summary>
+        /// Gets or sets the receiver session identifier
+        /// </summary>
+        [DataMember(Name = "sessionId", EmitDefaultValue = false)]
+        public string SessionId { get; set; }
     }
 }
