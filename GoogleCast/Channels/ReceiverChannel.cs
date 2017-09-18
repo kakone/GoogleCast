@@ -1,6 +1,7 @@
 ﻿using GoogleCast.Messages.Receiver;
 using GoogleCast.Models;
 using GoogleCast.Models.Receiver;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -91,16 +92,10 @@ namespace GoogleCast.Channels
         /// </summary>
         /// <param name="ns">namespace</param>
         /// <returns>an application object</returns>
-        public async Task<Application> EnsureConnection(string ns = null)
+        public async Task<Application> EnsureConnection(string ns)
         {
-            var status = Status;
-            if (status == null)
-            {
-                status = await GetStatusAsync();
-            }
-
-            var applications = status.Applications;
-            var application = ns == null ? applications.First() : applications.First(a => a.Namespaces.Any(n => n.Name == ns));
+            var status = await CheckStatus();
+            var application = status.Applications.First(a => a.Namespaces.Any(n => n.Name == ns));
             if (!IsConnected)
             {
                 await Sender.GetChannel<IConnectionChannel>().ConnectAsync(application.TransportId);
@@ -115,15 +110,24 @@ namespace GoogleCast.Channels
         }
 
         /// <summary>
-        /// Stops the current application
+        /// Stops the current applications
         /// </summary>
+        /// <param name="applications">applications to stop</param>
         /// <returns>ReceiverStatus</returns>
-        public async Task<ReceiverStatus> StopAsync(Application application = null)
+        public async Task<ReceiverStatus> StopAsync(params Application[] applications)
         {
-            return (await SendAsync<ReceiverStatusMessage>(new StopMessage()
+            IEnumerable<Application> apps = applications;
+            if (apps == null)
             {
-                SessionId = application == null ? (await EnsureConnection()).SessionId : application.SessionId
-            })).Status;
+                apps = (await CheckStatus()).Applications;
+            }
+
+            ReceiverStatusMessage receiverStatusMessage = null;
+            foreach (var application in apps)
+            {
+                receiverStatusMessage = await SendAsync<ReceiverStatusMessage>(new StopMessage() { SessionId = application.SessionId });
+            }
+            return receiverStatusMessage.Status;
         }
     }
 }

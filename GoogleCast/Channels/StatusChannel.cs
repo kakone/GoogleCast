@@ -79,6 +79,20 @@ namespace GoogleCast.Channels
         }
 
         /// <summary>
+        /// Check the status
+        /// </summary>
+        /// <returns>the current status</returns>
+        protected async Task<TStatus> CheckStatus()
+        {
+            var status = Status;
+            if (status == null)
+            {
+                status = await GetStatusAsync();
+            }
+            return status;
+        }
+
+        /// <summary>
         /// Retrieves the status
         /// </summary>
         /// <returns>the status</returns>

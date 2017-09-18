@@ -37,10 +37,10 @@ namespace GoogleCast.Channels
         Task<ReceiverStatus> SetIsMutedAsync(bool isMuted);
 
         /// <summary>
-        /// Stops the current application
+        /// Stops the current applications
         /// </summary>
-        /// <param name="application">application</param>
+        /// <param name="applications">applications to stop</param>
         /// <returns>ReceiverStatus</returns>
-        Task<ReceiverStatus> StopAsync(Application application = null);
+        Task<ReceiverStatus> StopAsync(params Application[] applications);
     }
 }
