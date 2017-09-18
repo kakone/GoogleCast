@@ -29,9 +29,11 @@ namespace GoogleCast
         private static void RegisterMessages(IServiceCollection services)
         {
             var messageInterfaceType = typeof(IMessage);
-            foreach (var type in (from t in typeof(ServiceCollectionExtensions).GetTypeInfo().Assembly.GetTypes()
-                                  where t.GetTypeInfo().IsClass && !t.GetTypeInfo().IsAbstract && messageInterfaceType.IsAssignableFrom(t)
-                                  select t))
+            foreach (var type in typeof(ServiceCollectionExtensions).GetTypeInfo().Assembly.GetTypes().Where(t =>
+            {
+                var typeInfo = t.GetTypeInfo();
+                return typeInfo.IsClass && !typeInfo.IsAbstract && typeInfo.GetCustomAttribute<ReceptionMessageAttribute>() != null && messageInterfaceType.IsAssignableFrom(t);
+            }))
             {
                 services.AddTransient(messageInterfaceType, type);
             }

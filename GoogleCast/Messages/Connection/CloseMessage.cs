@@ -6,6 +6,7 @@ namespace GoogleCast.Messages.Connection
     /// Close message
     /// </summary>
     [DataContract]
+    [ReceptionMessage]
     class CloseMessage : Message
     {
     }

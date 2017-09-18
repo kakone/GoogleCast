@@ -1,5 +1,6 @@
 ﻿using GoogleCast.Messages;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GoogleCast.Channels
@@ -7,9 +8,12 @@ namespace GoogleCast.Channels
     /// <summary>
     /// Base class for status channels
     /// </summary>
-    /// <typeparam name="TStatusMessage">status message type</typeparam>
     /// <typeparam name="TStatus">status type</typeparam>
-    public abstract class StatusChannel<TStatusMessage, TStatus> : Channel, IStatusChannel<TStatus> where TStatusMessage : IStatusMessage<TStatus>
+    /// <typeparam name="TStatusMessage">status message type</typeparam>
+    /// <typeparam name="TGetStatusMessage">get status message type</typeparam>
+    public abstract class StatusChannel<TStatus, TStatusMessage, TGetStatusMessage> : Channel, IStatusChannel<TStatus>
+        where TStatusMessage : IStatusMessage<TStatus>
+        where TGetStatusMessage : IMessageWithId, new()
     {
         /// <summary>
         /// Raised when the status has changed
@@ -24,10 +28,22 @@ namespace GoogleCast.Channels
         {
         }
 
+        private TStatus _status;
         /// <summary>
         /// Gets or sets the status
         /// </summary>
-        public TStatus Status { get; protected set; }
+        public TStatus Status
+        {
+            get { return _status; }
+            protected set
+            {
+                if (!EqualityComparer<TStatus>.Default.Equals(_status, value))
+                {
+                    _status = value;
+                    OnStatusChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// Called when a message for this channel is received
@@ -39,7 +55,6 @@ namespace GoogleCast.Channels
             {
                 case TStatusMessage statusMessage:
                     Status = statusMessage.Status;
-                    OnStatusChanged();
                     break;
             }
 
@@ -52,6 +67,24 @@ namespace GoogleCast.Channels
         protected virtual void OnStatusChanged()
         {
             StatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Creates a GetStatusMessage
+        /// </summary>
+        /// <returns>a GetStatusMessage</returns>
+        protected virtual TGetStatusMessage CreateGetStatusMessage()
+        {
+            return new TGetStatusMessage();
+        }
+
+        /// <summary>
+        /// Retrieves the status
+        /// </summary>
+        /// <returns>the status</returns>
+        public async Task<TStatus> GetStatusAsync()
+        {
+            return (await SendAsync<TStatusMessage>(CreateGetStatusMessage())).Status;
         }
     }
 }

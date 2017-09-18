@@ -7,6 +7,7 @@ namespace GoogleCast.Messages.Media
     /// Load failed message
     /// </summary>
     [DataContract]
+    [ReceptionMessage]
     class LoadFailedMessage : MessageWithId
     {
         [OnDeserializing]

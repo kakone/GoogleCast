@@ -7,6 +7,7 @@ namespace GoogleCast.Messages.Receiver
     /// Receiver status message
     /// </summary>
     [DataContract]
+    [ReceptionMessage]
     class ReceiverStatusMessage : StatusMessage<ReceiverStatus>
     {
     }

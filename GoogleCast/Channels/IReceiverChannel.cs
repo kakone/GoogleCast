@@ -35,5 +35,12 @@ namespace GoogleCast.Channels
         /// <param name="isMuted">true if audio should be muted; otherwise, false</param>
         /// <returns>receiver status</returns>
         Task<ReceiverStatus> SetIsMutedAsync(bool isMuted);
+
+        /// <summary>
+        /// Stops the current application
+        /// </summary>
+        /// <param name="application">application</param>
+        /// <returns>ReceiverStatus</returns>
+        Task<ReceiverStatus> StopAsync(Application application = null);
     }
 }

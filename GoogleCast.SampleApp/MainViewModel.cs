@@ -228,21 +228,33 @@ namespace GoogleCast.SampleApp
             await InvokeAsync<TChannel>(condition ? action : otherwise);
         }
 
+        private async Task<bool> ConnectAsync()
+        {
+            var selectedReceiver = SelectedReceiver;
+            if (selectedReceiver != null)
+            {
+                await Sender.ConnectAsync(selectedReceiver);
+                return true;
+            }
+            return false;
+        }
+
         private async Task PlayAsync()
         {
             await SendChannelCommandAsync<IMediaChannel>(!IsInitialized || IsStopped,
                 async c =>
                 {
-                    var selectedReceiver = SelectedReceiver;
                     var link = Link;
-                    if (selectedReceiver != null && !string.IsNullOrWhiteSpace(link))
+                    if (!string.IsNullOrWhiteSpace(link))
                     {
-                        var sender = Sender;
-                        await sender.ConnectAsync(selectedReceiver);
-                        var mediaChannel = sender.GetChannel<IMediaChannel>();
-                        await sender.LaunchAsync(mediaChannel);
-                        await mediaChannel.LoadAsync(new Media() { ContentId = link, });
-                        IsInitialized = true;
+                        if (await ConnectAsync())
+                        {
+                            var sender = Sender;
+                            var mediaChannel = sender.GetChannel<IMediaChannel>();
+                            await sender.LaunchAsync(mediaChannel);
+                            await mediaChannel.LoadAsync(new Media() { ContentId = link, });
+                            IsInitialized = true;
+                        }
                     }
                 }, c => c.PlayAsync());
         }
@@ -254,7 +266,17 @@ namespace GoogleCast.SampleApp
 
         private async Task StopAsync()
         {
-            await SendChannelCommandAsync<IMediaChannel>(IsStopped, null, async c => await c.StopAsync());
+            if (IsStopped)
+            {
+                if (IsInitialized || await ConnectAsync())
+                {
+                    await InvokeAsync<IReceiverChannel>(c => c.StopAsync());
+                }
+            }
+            else
+            {
+                await InvokeAsync<IMediaChannel>(c => c.StopAsync());
+            }
         }
 
         private async Task RefreshAsync()
@@ -294,13 +316,16 @@ namespace GoogleCast.SampleApp
             if (!IsInitialized)
             {
                 var status = ((IReceiverChannel)sender).Status;
-                if (status.Volume.Level != null)
+                if (status != null)
                 {
-                    Volume = (float)status.Volume.Level;
-                }
-                if (status.Volume.IsMuted != null)
-                {
-                    IsMuted = (bool)status.Volume.IsMuted;
+                    if (status.Volume.Level != null)
+                    {
+                        Volume = (float)status.Volume.Level;
+                    }
+                    if (status.Volume.IsMuted != null)
+                    {
+                        IsMuted = (bool)status.Volume.IsMuted;
+                    }
                 }
             }
         }

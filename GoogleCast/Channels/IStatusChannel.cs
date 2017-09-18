@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace GoogleCast.Channels
 {
@@ -17,5 +18,11 @@ namespace GoogleCast.Channels
         /// Gets the status
         /// </summary>
         TStatus Status { get; }
+
+        /// <summary>
+        /// Retrieves the status
+        /// </summary>
+        /// <returns>the status</returns>
+        Task<TStatus> GetStatusAsync();
     }
 }

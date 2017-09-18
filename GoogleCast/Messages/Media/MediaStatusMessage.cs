@@ -8,6 +8,7 @@ namespace GoogleCast.Messages.Media
     /// Media status message
     /// </summary>
     [DataContract]
+    [ReceptionMessage]
     class MediaStatusMessage : StatusMessage<IEnumerable<MediaStatus>>
     {
     }

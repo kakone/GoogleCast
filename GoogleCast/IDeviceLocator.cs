@@ -12,6 +12,6 @@ namespace GoogleCast
         /// Find the available receivers
         /// </summary>
         /// <returns>a collection of receivers</returns>
-        Task<IEnumerable<Receiver>> FindReceiversAsync();
+        Task<IEnumerable<IReceiver>> FindReceiversAsync();
     }
 }

@@ -12,7 +12,7 @@ namespace GoogleCast.Channels
     /// <summary>
     /// Media channel
     /// </summary>
-    class MediaChannel : StatusChannel<MediaStatusMessage, IEnumerable<MediaStatus>>, IMediaChannel
+    class MediaChannel : StatusChannel<IEnumerable<MediaStatus>, MediaStatusMessage, GetStatusMessage>, IMediaChannel
     {
         /// <summary>
         /// Initializes a new instance of MediaChannel class
@@ -45,10 +45,26 @@ namespace GoogleCast.Channels
             }
         }
 
-        private async Task<MediaStatus> SendAsync(MediaSessionMessage message)
+        private void SetMediaSessionId(MediaSessionMessage message)
         {
             message.MediaSessionId = Status?.First().MediaSessionId ?? throw new ArgumentNullException("MediaSessionId");
+        }
+
+        private async Task<MediaStatus> SendAsync(MediaSessionMessage message)
+        {
+            SetMediaSessionId(message);
             return await SendAsync(message, null);
+        }
+
+        /// <summary>
+        /// Creates a GetStatusMessage
+        /// </summary>
+        /// <returns>a GetStatusMessage</returns>
+        protected override GetStatusMessage CreateGetStatusMessage()
+        {
+            var message = base.CreateGetStatusMessage();
+            SetMediaSessionId(message);
+            return message;
         }
 
         /// <summary>

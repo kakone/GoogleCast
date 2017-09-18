@@ -9,7 +9,7 @@ namespace GoogleCast.Channels
     /// <summary>
     /// Receiver channel
     /// </summary>
-    class ReceiverChannel : StatusChannel<ReceiverStatusMessage, ReceiverStatus>, IReceiverChannel
+    class ReceiverChannel : StatusChannel<ReceiverStatus, ReceiverStatusMessage, GetStatusMessage>, IReceiverChannel
     {
         /// <summary>
         /// Initializes a new instance of ReceiverChannel class
@@ -91,14 +91,16 @@ namespace GoogleCast.Channels
         /// </summary>
         /// <param name="ns">namespace</param>
         /// <returns>an application object</returns>
-        public async Task<Application> EnsureConnection(string ns)
+        public async Task<Application> EnsureConnection(string ns = null)
         {
-            if (Status == null)
+            var status = Status;
+            if (status == null)
             {
-                return null;
+                status = await GetStatusAsync();
             }
 
-            var application = Status.Applications.First(a => a.Namespaces.Any(n => n.Name == ns));
+            var applications = status.Applications;
+            var application = ns == null ? applications.First() : applications.First(a => a.Namespaces.Any(n => n.Name == ns));
             if (!IsConnected)
             {
                 await Sender.GetChannel<IConnectionChannel>().ConnectAsync(application.TransportId);
@@ -110,6 +112,18 @@ namespace GoogleCast.Channels
         private void Disconnected(object sender, System.EventArgs e)
         {
             IsConnected = false;
+        }
+
+        /// <summary>
+        /// Stops the current application
+        /// </summary>
+        /// <returns>ReceiverStatus</returns>
+        public async Task<ReceiverStatus> StopAsync(Application application = null)
+        {
+            return (await SendAsync<ReceiverStatusMessage>(new StopMessage()
+            {
+                SessionId = application == null ? (await EnsureConnection()).SessionId : application.SessionId
+            })).Status;
         }
     }
 }

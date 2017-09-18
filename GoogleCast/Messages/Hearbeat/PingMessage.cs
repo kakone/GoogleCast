@@ -6,6 +6,7 @@ namespace GoogleCast.Messages.Heartbeat
     /// Ping message
     /// </summary>
     [DataContract]
+    [ReceptionMessage]
     class PingMessage : Message
     {
     }

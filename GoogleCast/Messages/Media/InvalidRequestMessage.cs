@@ -7,6 +7,7 @@ namespace GoogleCast.Messages.Media
     /// Invalid request message
     /// </summary>
     [DataContract]
+    [ReceptionMessage]
     class InvalidRequestMessage : MessageWithId
     {
         /// <summary>
