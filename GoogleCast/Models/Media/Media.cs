@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace GoogleCast.Models.Media
 {
     /// <summary>
-    /// Get or sets the media
+    /// Media item
     /// </summary>
     [DataContract]
     public class Media
@@ -18,8 +19,14 @@ namespace GoogleCast.Models.Media
         /// <summary>
         /// Gets or sets the stream type
         /// </summary>
-        [DataMember(Name = "streamType")]
         public StreamType StreamType { get; set; } = StreamType.Buffered;
+
+        [DataMember(Name = "streamType")]
+        private string StreamTypeString
+        {
+            get { return Enum.GetName(typeof(StreamType), StreamType).ToUpperInvariant(); }
+            set { StreamType = (StreamType)Enum.Parse(typeof(StreamType), value, true); }
+        }
 
         /// <summary>
         /// Gets or sets the content type
@@ -44,5 +51,11 @@ namespace GoogleCast.Models.Media
         /// </summary>
         [DataMember(Name = "customData")]
         public IDictionary<string, string> CustomData { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tracks
+        /// </summary>
+        [DataMember(Name = "tracks")]
+        public IEnumerable<Track> Tracks { get; set; }
     }
 }

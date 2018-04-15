@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="GoogleCast" Height="160" Width="784"
+        Title="GoogleCast" Height="200" Width="784"
         ResizeMode="CanResizeWithGrip"
         DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -38,6 +39,14 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label VerticalAlignment="Center">Subtitle file</Label>
+            <TextBox Grid.Column="1" Margin="4" Text="{Binding Subtitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
+        </Grid>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label VerticalAlignment="Center">Volume</Label>
@@ -46,6 +55,6 @@
             <CheckBox Grid.Column="2" Margin="4" IsChecked="{Binding IsMuted, Mode=TwoWay}" VerticalAlignment="Center"
                       IsEnabled="{Binding AreButtonsEnabled}">Mute</CheckBox>
         </Grid>
-        <TextBlock Grid.Row="3" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PlayerState}" />
+        <TextBlock Grid.Row="4" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PlayerState}" />
     </Grid>
 </Window>

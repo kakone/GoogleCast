@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("GoogleCast.SampleApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Stéphane Mitermite")]
 [assembly: AssemblyProduct("GoogleCast.SampleApp")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright © 2018 Stéphane Mitermite")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

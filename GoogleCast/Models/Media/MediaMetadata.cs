@@ -26,7 +26,7 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the subtitle
         /// </summary>
         [DataMember(Name = "subtitle")]
-        public string SubTitle { get; set; }
+        public string Subtitle { get; set; }
 
         /// <summary>
         /// Gets or sets the images

@@ -109,7 +109,7 @@ namespace GoogleCast.SampleApp
             private set { Set(nameof(PlayerState), ref _playerState, value); }
         }
 
-        private string _link = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+        private string _link = "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/DesigningForGoogleCast.mp4";
         /// <summary>
         /// Gets or sets the link to play
         /// </summary>
@@ -126,6 +126,16 @@ namespace GoogleCast.SampleApp
                     RaiseButtonsCommandsCanExecuteChanged();
                 }
             }
+        }
+
+        private string _subtitle = "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/tracks/DesigningForGoogleCast-en.vtt";
+        /// <summary>
+        /// Gets or sets the subtitle file
+        /// </summary>
+        public string Subtitle
+        {
+            get { return _subtitle; }
+            set { Set(nameof(Subtitle), ref _subtitle, value); }
         }
 
         private bool _isMuted;
@@ -245,16 +255,27 @@ namespace GoogleCast.SampleApp
                 async c =>
                 {
                     var link = Link;
-                    if (!string.IsNullOrWhiteSpace(link))
+                    if (!string.IsNullOrWhiteSpace(link) && await ConnectAsync())
                     {
-                        if (await ConnectAsync())
+                        var sender = Sender;
+                        var mediaChannel = sender.GetChannel<IMediaChannel>();
+                        await sender.LaunchAsync(mediaChannel);
+                        var media = new Media() { ContentId = link };
+                        var subtitle = Subtitle;
+                        var hasSubtitles = !string.IsNullOrWhiteSpace(subtitle);
+                        if (hasSubtitles)
                         {
-                            var sender = Sender;
-                            var mediaChannel = sender.GetChannel<IMediaChannel>();
-                            await sender.LaunchAsync(mediaChannel);
-                            await mediaChannel.LoadAsync(new Media() { ContentId = link, });
-                            IsInitialized = true;
+                            media.Tracks = new Track[]
+                            {
+                                new Track() {  TrackId = 1, Language = "en-US", Name = "English", TrackContentId = subtitle }
+                            };
+                            await mediaChannel.LoadAsync(media, true, 1);
                         }
+                        else
+                        {
+                            await mediaChannel.LoadAsync(media);
+                        }
+                        IsInitialized = true;
                     }
                 }, c => c.PlayAsync());
         }
