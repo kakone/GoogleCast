@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace GoogleCast.Models.Media
 {
     /// <summary>
-    /// Media item
+    /// Media information
     /// </summary>
     [DataContract]
-    public class Media
+    public class MediaInformation
     {
         /// <summary>
         /// Gets or sets the content identifier
@@ -19,37 +18,38 @@ namespace GoogleCast.Models.Media
         /// <summary>
         /// Gets or sets the stream type
         /// </summary>
+        [IgnoreDataMember]
         public StreamType StreamType { get; set; } = StreamType.Buffered;
 
         [DataMember(Name = "streamType")]
         private string StreamTypeString
         {
-            get { return Enum.GetName(typeof(StreamType), StreamType).ToUpperInvariant(); }
-            set { StreamType = (StreamType)Enum.Parse(typeof(StreamType), value, true); }
+            get { return StreamType.GetName(); }
+            set { StreamType = EnumHelper.Parse<StreamType>(value); }
         }
 
         /// <summary>
         /// Gets or sets the content type
         /// </summary>
-        [DataMember(Name = "contentType")]
+        [DataMember(Name = "contentType", EmitDefaultValue = false)]
         public string ContentType { get; set; }
 
         /// <summary>
         /// Gets or sets the metadata
         /// </summary>
-        [DataMember(Name = "metadata")]
+        [DataMember(Name = "metadata", EmitDefaultValue = false)]
         public MediaMetadata Metadata { get; set; }
 
         /// <summary>
         /// Gets or sets the duration of the media
         /// </summary>
-        [DataMember(Name = "duration")]
+        [DataMember(Name = "duration", EmitDefaultValue = false)]
         public double? Duration { get; set; }
 
         /// <summary>
         /// Gets or sets the custom data
         /// </summary>
-        [DataMember(Name = "customData")]
+        [DataMember(Name = "customData", EmitDefaultValue = false)]
         public IDictionary<string, string> CustomData { get; set; }
 
         /// <summary>
@@ -57,5 +57,11 @@ namespace GoogleCast.Models.Media
         /// </summary>
         [DataMember(Name = "tracks")]
         public IEnumerable<Track> Tracks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the style of text track
+        /// </summary>
+        [DataMember(Name = "textTrackStyle")]
+        public TextTrackStyle TextTrackStyle { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace GoogleCast.Models.Media
 {
@@ -18,13 +17,14 @@ namespace GoogleCast.Models.Media
         /// <summary>
         /// Gets or sets the type of track
         /// </summary>
+        [IgnoreDataMember]
         public TrackType Type { get; set; } = TrackType.Text;
 
         [DataMember(Name = "type")]
         private string TypeString
         {
-            get { return Enum.GetName(typeof(TrackType), Type).ToUpperInvariant(); }
-            set { Type = (TrackType)Enum.Parse(typeof(TrackType), value, true); }
+            get { return Type.GetName(); }
+            set { Type = EnumHelper.Parse<TrackType>(value); }
         }
 
         /// <summary>
@@ -44,13 +44,14 @@ namespace GoogleCast.Models.Media
         /// <summary>
         /// Gets or sets the type of text track
         /// </summary>
+        [IgnoreDataMember]
         public TextTrackType SubType { get; set; }
 
         [DataMember(Name = "subType")]
         private string SubTypeString
         {
-            get { return Enum.GetName(typeof(TextTrackType), SubType).ToUpperInvariant(); }
-            set { SubType = (TextTrackType)Enum.Parse(typeof(TextTrackType), value, true); }
+            get { return SubType.GetName(); }
+            set { SubType = EnumHelper.Parse<TextTrackType>(value); }
         }
 
         /// <summary>

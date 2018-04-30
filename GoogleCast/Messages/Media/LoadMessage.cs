@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GoogleCast.Models.Media;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace GoogleCast.Messages.Media
@@ -13,7 +14,7 @@ namespace GoogleCast.Messages.Media
         /// Gets or sets the media
         /// </summary>
         [DataMember(Name = "media")]
-        public Models.Media.Media Media { get; set; }
+        public MediaInformation Media { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the media must be played directly or not

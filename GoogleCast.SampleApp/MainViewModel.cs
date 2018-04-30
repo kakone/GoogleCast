@@ -5,6 +5,7 @@ using GoogleCast.Channels;
 using GoogleCast.Models.Media;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -260,20 +261,26 @@ namespace GoogleCast.SampleApp
                         var sender = Sender;
                         var mediaChannel = sender.GetChannel<IMediaChannel>();
                         await sender.LaunchAsync(mediaChannel);
-                        var media = new Media() { ContentId = link };
+                        var mediaInfo = new MediaInformation() { ContentId = link };
                         var subtitle = Subtitle;
                         var hasSubtitles = !string.IsNullOrWhiteSpace(subtitle);
                         if (hasSubtitles)
                         {
-                            media.Tracks = new Track[]
+                            mediaInfo.Tracks = new Track[]
                             {
                                 new Track() {  TrackId = 1, Language = "en-US", Name = "English", TrackContentId = subtitle }
                             };
-                            await mediaChannel.LoadAsync(media, true, 1);
+                            mediaInfo.TextTrackStyle = new TextTrackStyle()
+                            {
+                                BackgroundColor = Color.Transparent,
+                                EdgeColor = Color.Black,
+                                EdgeType = TextTrackEdgeType.DropShadow
+                            };
+                            await mediaChannel.LoadAsync(mediaInfo, true, 1);
                         }
                         else
                         {
-                            await mediaChannel.LoadAsync(media);
+                            await mediaChannel.LoadAsync(mediaInfo);
                         }
                         IsInitialized = true;
                     }

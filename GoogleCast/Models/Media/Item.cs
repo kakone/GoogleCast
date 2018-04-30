@@ -18,7 +18,7 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the media
         /// </summary>
         [DataMember(Name = "media")]
-        public Media Media { get; set; }
+        public MediaInformation Media { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether autoplay is enabled or not

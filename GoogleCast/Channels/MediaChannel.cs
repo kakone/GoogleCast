@@ -74,7 +74,7 @@ namespace GoogleCast.Channels
         /// <param name="autoPlay">true to play the media directly, false otherwise</param>
         /// <param name="activeTrackIds">track identifiers that should be active</param>
         /// <returns>media status</returns>
-        public async Task<MediaStatus> LoadAsync(Media media, bool autoPlay = true, params int[] activeTrackIds)
+        public async Task<MediaStatus> LoadAsync(MediaInformation media, bool autoPlay = true, params int[] activeTrackIds)
         {
             var application = await ReceiverChannel.EnsureConnection(Namespace);
             return await SendAsync(new LoadMessage()
@@ -92,7 +92,7 @@ namespace GoogleCast.Channels
         /// <param name="enabledTextTracks">true to enable text tracks, false otherwise</param>
         /// <param name="language">language for the tracks that should be active</param>
         /// <param name="activeTrackIds">track identifiers that should be active</param>
-        /// <returns></returns>
+        /// <returns>media status</returns>
         public async Task<MediaStatus> EditTracksInfoAsync(string language = null, bool enabledTextTracks = true, params int[] activeTrackIds)
         {
             return await SendAsync(new EditTracksInfoMessage()
