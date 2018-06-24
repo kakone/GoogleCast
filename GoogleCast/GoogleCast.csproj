@@ -16,7 +16,7 @@
     <AssemblyVersion>1.6.2.0</AssemblyVersion>
     <FileVersion>1.6.2.0</FileVersion>
     <Version>1.6.2</Version>
-    <PackageIconUrl>https://github.com/kakone/GoogleCast/blob/master/GoogleCast.png</PackageIconUrl>
+    <PackageIconUrl>https://github.com/kakone/GoogleCast/raw/master/GoogleCast.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
