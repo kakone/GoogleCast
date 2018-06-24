@@ -11,11 +11,12 @@
     <Copyright>Copyright © 2018 Stéphane Mitermite</Copyright>
     <PackageLicenseUrl>https://github.com/kakone/GoogleCast/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/kakone/GoogleCast</PackageProjectUrl>
-    <PackageTags>google cast chromecast</PackageTags>
+    <PackageTags>google cast googlecast chromecast</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <AssemblyVersion>1.6.1.0</AssemblyVersion>
-    <FileVersion>1.6.1.0</FileVersion>
-    <Version>1.6.1</Version>
+    <AssemblyVersion>1.6.2.0</AssemblyVersion>
+    <FileVersion>1.6.2.0</FileVersion>
+    <Version>1.6.2</Version>
+    <PackageIconUrl>https://github.com/kakone/GoogleCast/blob/master/GoogleCast.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
