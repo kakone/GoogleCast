@@ -17,7 +17,7 @@ namespace GoogleCast.SampleApp
     class MainViewModel : ViewModelBase
     {
         /// <summary>
-        /// Initializes a new instance of MainViewModel class
+        /// Initializes a new instance of <see cref="MainViewModel"/> class
         /// </summary>
         /// <param name="deviceLocator">GoogleCast device locator</param>
         /// <param name="sender">GoogleCast sender</param>

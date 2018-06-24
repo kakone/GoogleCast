@@ -5,7 +5,8 @@ namespace GoogleCast.Messages
     /// <summary>
     /// Attribute for received messages
     /// </summary>
-    class ReceptionMessageAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class ReceptionMessageAttribute : Attribute
     {
     }
 }

@@ -31,51 +31,36 @@ namespace GoogleCast
         public event EventHandler Disconnected;
 
         /// <summary>
-        /// Initializes a new instance of Sender class
+        /// Initializes a new instance of <see cref="Sender"/> class
         /// </summary>
-        public Sender() : this(ServiceCollection.Default)
+        public Sender() : this(new ServiceCollection().AddGoogleCast().BuildServiceProvider())
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of Sender class
+        /// Initializes a new instance of <see cref="Sender"/> class
         /// </summary>
-        /// <param name="serviceCollection">collection of service descriptors</param>
-        public Sender(IServiceCollection serviceCollection)
+        /// <param name="serviceProvider">collection of service descriptors</param>
+        public Sender(IServiceProvider serviceProvider)
         {
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            Init(serviceProvider.GetServices<IChannel>(), serviceProvider.GetServices<IMessage>());
-        }
-
-        /// <summary>
-        /// Initializes a new instance of Sender class
-        /// </summary>
-        /// <param name="channels">the channels collection</param>
-        /// <param name="messages">messages that can be received</param>
-        public Sender(IEnumerable<IChannel> channels, IEnumerable<IMessage> messages)
-        {
-            Init(channels, messages);
-        }
-
-        private IReceiver Receiver { get; set; }
-        private IDictionary<string, Type> MessageTypes { get; set; }
-        private IEnumerable<IChannel> Channels { get; set; }
-        private Stream NetworkStream { get; set; }
-        private TcpClient TcpClient { get; set; }
-        private SemaphoreSlim SendSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
-        private SemaphoreSlim EnsureConnectionSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
-        private ConcurrentDictionary<int, object> WaitingTasks { get; } = new ConcurrentDictionary<int, object>();
-        private TaskCompletionSource<bool> ReceiveTcs { get; set; }
-
-        private void Init(IEnumerable<IChannel> channels, IEnumerable<IMessage> messages)
-        {
-            MessageTypes = messages.Where(t => !String.IsNullOrEmpty(t.Type)).ToDictionary(m => m.Type, m => m.GetType());
+            ServiceProvider = serviceProvider;
+            var channels = serviceProvider.GetServices<IChannel>();
             Channels = channels;
             foreach (var channel in channels)
             {
                 channel.Sender = this;
             }
         }
+
+        private IServiceProvider ServiceProvider { get; }
+        private IEnumerable<IChannel> Channels { get; set; }
+        private IReceiver Receiver { get; set; }
+        private Stream NetworkStream { get; set; }
+        private TcpClient TcpClient { get; set; }
+        private SemaphoreSlim SendSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim EnsureConnectionSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
+        private ConcurrentDictionary<int, object> WaitingTasks { get; } = new ConcurrentDictionary<int, object>();
+        private TaskCompletionSource<bool> ReceiveTcs { get; set; }
 
         /// <summary>
         /// Disconnects
@@ -172,6 +157,8 @@ namespace GoogleCast
             {
                 try
                 {
+                    var channels = Channels;
+                    var messageTypes = ServiceProvider.GetService<IMessageTypes>();
                     while (true)
                     {
                         var buffer = await ReadAsync(4);
@@ -190,16 +177,16 @@ namespace GoogleCast
                         var payload = (castMessage.PayloadType == PayloadType.Binary ?
                             Encoding.UTF8.GetString(castMessage.PayloadBinary) : castMessage.PayloadUtf8);
                         Debug.WriteLine($"RECEIVED: {castMessage.Namespace} : {payload}");
-                        var channel = Channels.FirstOrDefault(c => c.Namespace == castMessage.Namespace);
+                        var channel = channels.FirstOrDefault(c => c.Namespace == castMessage.Namespace);
                         if (channel != null)
                         {
                             var message = JsonSerializer.Deserialize<MessageWithId>(payload);
-                            if (MessageTypes.TryGetValue(message.Type, out Type type))
+                            if (messageTypes.TryGetValue(message.Type, out Type type))
                             {
                                 try
                                 {
                                     var response = (IMessage)JsonSerializer.Deserialize(type, payload);
-                                    await channel.OnMessageReceivedAsync((IMessage)JsonSerializer.Deserialize(type, payload));
+                                    await channel.OnMessageReceivedAsync(response);
                                     TaskCompletionSourceInvoke(message, "SetResult", response);
                                 }
                                 catch (Exception ex)

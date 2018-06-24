@@ -10,7 +10,7 @@ namespace GoogleCast.Channels
     class HeartbeatChannel : Channel, IHeartbeatChannel
     {
         /// <summary>
-        /// Initializes a new instance of HeartbeatChannel class
+        /// Initializes a new instance of <see cref="HeartbeatChannel"/> class
         /// </summary>
         public HeartbeatChannel() : base("tp.heartbeat")
         {

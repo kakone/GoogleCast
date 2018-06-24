@@ -13,7 +13,7 @@ namespace GoogleCast.Channels
     class ReceiverChannel : StatusChannel<ReceiverStatus, ReceiverStatusMessage, GetStatusMessage>, IReceiverChannel
     {
         /// <summary>
-        /// Initializes a new instance of ReceiverChannel class
+        /// Initializes a new instance of <see cref="ReceiverChannel"/> class
         /// </summary>
         public ReceiverChannel() : base("receiver")
         {

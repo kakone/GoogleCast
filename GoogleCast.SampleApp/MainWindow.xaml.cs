@@ -8,7 +8,7 @@ namespace GoogleCast.SampleApp
     public partial class MainWindow : Window
     {
         /// <summary>
-        /// Initializes a new instance of MainWindow class
+        /// Initializes a new instance of <see cref="MainWindow"/> class
         /// </summary>
         public MainWindow()
         {

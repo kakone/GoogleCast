@@ -10,7 +10,7 @@ namespace GoogleCast.Channels
     class ConnectionChannel : Channel, IConnectionChannel
     {
         /// <summary>
-        /// Initializes a new instance of ConnectionChannel class
+        /// Initializes a new instance of <see cref="ConnectionChannel"/> class
         /// </summary>
         public ConnectionChannel() : base("tp.connection")
         {
