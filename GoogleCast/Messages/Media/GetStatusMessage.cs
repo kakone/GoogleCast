@@ -3,7 +3,7 @@
 namespace GoogleCast.Messages.Media
 {
     /// <summary>
-    /// Get status message
+    /// Message to retrieve the media status
     /// </summary>
     [DataContract]
     class GetStatusMessage : MediaSessionMessage

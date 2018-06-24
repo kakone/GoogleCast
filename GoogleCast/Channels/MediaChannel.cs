@@ -87,6 +87,39 @@ namespace GoogleCast.Channels
         }
 
         /// <summary>
+        /// Loads a queue items
+        /// </summary>
+        /// <param name="repeatMode">queue repeat mode</param>
+        /// <param name="medias">media items</param>
+        /// <returns>media status</returns>
+        public Task<MediaStatus> QueueLoadAsync(RepeatMode repeatMode, params MediaInformation[] medias)
+        {
+            return QueueLoadAsync(repeatMode, medias.Select(mi => new QueueItem() { Media = mi }));
+        }
+
+        /// <summary>
+        /// Loads a queue items
+        /// </summary>
+        /// <param name="repeatMode">queue repeat mode</param>
+        /// <param name="queueItems">items to load</param>
+        /// <returns>media status</returns>
+        public Task<MediaStatus> QueueLoadAsync(RepeatMode repeatMode, params QueueItem[] queueItems)
+        {
+            return QueueLoadAsync(repeatMode, queueItems as IEnumerable<QueueItem>);
+        }
+
+        private async Task<MediaStatus> QueueLoadAsync(RepeatMode repeatMode, IEnumerable<QueueItem> queueItems)
+        {
+            var application = await ReceiverChannel.EnsureConnection(Namespace);
+            return await SendAsync(new QueueLoadMessage()
+            {
+                SessionId = application.SessionId,
+                RepeatMode = repeatMode,
+                Items = queueItems
+            }, application);
+        }
+
+        /// <summary>
         /// Edits tracks info
         /// </summary>
         /// <param name="enabledTextTracks">true to enable text tracks, false otherwise</param>

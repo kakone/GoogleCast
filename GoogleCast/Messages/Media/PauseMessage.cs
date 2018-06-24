@@ -3,7 +3,7 @@
 namespace GoogleCast.Messages.Media
 {
     /// <summary>
-    /// Pause message
+    /// Message to pause playback of the current content
     /// </summary>
     [DataContract]
     class PauseMessage : MediaSessionMessage

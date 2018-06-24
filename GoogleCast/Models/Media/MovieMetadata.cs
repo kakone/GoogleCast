@@ -6,15 +6,13 @@ namespace GoogleCast.Models.Media
     /// Movie metadata
     /// </summary>
     [DataContract]
-    public class MovieMetadata : MediaMetadata
+    public class MovieMetadata : GenericMediaMetadata
     {
         /// <summary>
-        /// Initializes a new instance of MovieMetadata class
+        /// Gets the metadata type
         /// </summary>
-        public MovieMetadata()
-        {
-            MetadataType = MetadataType.Movie;
-        }
+        [DataMember(Name = "metadataType")]
+        public override MetadataType MetadataType { get; } = MetadataType.Movie;
 
         /// <summary>
         /// Gets or sets the studio

@@ -236,7 +236,7 @@ namespace GoogleCast.SampleApp
 
         private async Task SendChannelCommandAsync<TChannel>(bool condition, Func<TChannel, Task> action, Func<TChannel, Task> otherwise) where TChannel : IChannel
         {
-            await InvokeAsync<TChannel>(condition ? action : otherwise);
+            await InvokeAsync(condition ? action : otherwise);
         }
 
         private async Task<bool> ConnectAsync()
@@ -263,8 +263,7 @@ namespace GoogleCast.SampleApp
                         await sender.LaunchAsync(mediaChannel);
                         var mediaInfo = new MediaInformation() { ContentId = link };
                         var subtitle = Subtitle;
-                        var hasSubtitles = !string.IsNullOrWhiteSpace(subtitle);
-                        if (hasSubtitles)
+                        if (!string.IsNullOrWhiteSpace(subtitle))
                         {
                             mediaInfo.Tracks = new Track[]
                             {

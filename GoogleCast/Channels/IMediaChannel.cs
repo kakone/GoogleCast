@@ -19,6 +19,22 @@ namespace GoogleCast.Channels
         Task<MediaStatus> LoadAsync(MediaInformation media, bool autoPlay = true, params int[] activeTrackIds);
 
         /// <summary>
+        /// Loads a queue items
+        /// </summary>
+        /// <param name="repeatMode">queue repeat mode</param>
+        /// <param name="medias">media items</param>
+        /// <returns>media status</returns>
+        Task<MediaStatus> QueueLoadAsync(RepeatMode repeatMode, params MediaInformation[] medias);
+
+        /// <summary>
+        /// Loads a queue items
+        /// </summary>
+        /// <param name="repeatMode">queue repeat mode</param>
+        /// <param name="queueItems">items to load</param>
+        /// <returns>media status</returns>
+        Task<MediaStatus> QueueLoadAsync(RepeatMode repeatMode, params QueueItem[] queueItems);
+
+        /// <summary>
         /// Edits tracks info
         /// </summary>
         /// <param name="enabledTextTracks">true to enable text tracks, false otherwise</param>

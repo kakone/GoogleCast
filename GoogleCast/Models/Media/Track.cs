@@ -36,7 +36,7 @@ namespace GoogleCast.Models.Media
         /// <summary>
         /// Gets or sets the identifier of the track’s content
         /// </summary>
-        /// <remarks>It can be the url of the track or any other identifier that allows the receiver to find the content 
+        /// <remarks>it can be the url of the track or any other identifier that allows the receiver to find the content 
         /// (when the track is not inband or included in the manifest)</remarks>
         [DataMember(Name = "trackContentId")]
         public string TrackContentId { get; set; }
@@ -63,7 +63,7 @@ namespace GoogleCast.Models.Media
         /// <summary>
         /// Gets or sets the language tag as per RFC 5646
         /// </summary>
-        /// <remarks>Mandatory when the subtype is Subtitles</remarks>
+        /// <remarks>mandatory when the subtype is Subtitles</remarks>
         [DataMember(Name = "language")]
         public string Language { get; set; }
     }

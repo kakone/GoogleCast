@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace GoogleCast.Messages.Media
 {
     /// <summary>
-    /// Media status message
+    /// Message to retrieve the media status
     /// </summary>
     [DataContract]
     [ReceptionMessage]
