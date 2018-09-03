@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GoogleCast
@@ -9,9 +10,15 @@ namespace GoogleCast
     public interface IDeviceLocator
     {
         /// <summary>
-        /// Find the available receivers
+        /// Finds the available receivers
         /// </summary>
         /// <returns>a collection of receivers</returns>
         Task<IEnumerable<IReceiver>> FindReceiversAsync();
+
+        /// <summary>
+        /// Finds the available receivers in continuous way
+        /// </summary>
+        /// <returns>a provider for notifications</returns>
+        IObservable<IReceiver> FindReceiversContinuous();
     }
 }
