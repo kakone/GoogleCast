@@ -11,11 +11,19 @@ namespace GoogleCast.Models.Media
     public class GenericMediaMetadata
     {
         /// <summary>
+        /// Initializes a new instance of <see cref="GenericMediaMetadata"/> class
+        /// </summary>
+        public GenericMediaMetadata()
+        {
+            MetadataType = MetadataType.Default;
+        }
+
+        /// <summary>
         /// Gets the metadata type
         /// </summary>
         [DataMember(Name = "metadataType")]
-        public virtual MetadataType MetadataType { get; } = MetadataType.Default;
-
+        public MetadataType MetadataType { get; protected set; }
+        
         /// <summary>
         /// Gets or sets the descriptive title of the content
         /// </summary>
