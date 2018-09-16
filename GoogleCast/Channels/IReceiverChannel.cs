@@ -9,6 +9,12 @@ namespace GoogleCast.Channels
     public interface IReceiverChannel : IStatusChannel<ReceiverStatus>
     {
         /// <summary>
+        /// Retrieves the status
+        /// </summary>
+        /// <returns>the status</returns>
+        Task<ReceiverStatus> GetStatusAsync();
+
+        /// <summary>
         /// Launches an application
         /// </summary>
         /// <param name="applicationId">application identifier</param>

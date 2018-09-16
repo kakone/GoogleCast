@@ -10,6 +10,12 @@ namespace GoogleCast.Channels
     public interface IMediaChannel : IStatusChannel<IEnumerable<MediaStatus>>, IApplicationChannel
     {
         /// <summary>
+        /// Retrieves the media status
+        /// </summary>
+        /// <returns>the media status</returns>
+        Task<MediaStatus> GetStatusAsync();
+
+        /// <summary>
         /// Loads a media
         /// </summary>
         /// <param name="media">media to load</param>

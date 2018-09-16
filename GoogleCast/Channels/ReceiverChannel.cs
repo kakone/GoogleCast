@@ -10,7 +10,7 @@ namespace GoogleCast.Channels
     /// <summary>
     /// Receiver channel
     /// </summary>
-    class ReceiverChannel : StatusChannel<ReceiverStatus, ReceiverStatusMessage, GetStatusMessage>, IReceiverChannel
+    class ReceiverChannel : StatusChannel<ReceiverStatus, ReceiverStatusMessage>, IReceiverChannel
     {
         /// <summary>
         /// Initializes a new instance of <see cref="ReceiverChannel"/> class
@@ -87,6 +87,16 @@ namespace GoogleCast.Channels
                 })).Status;
         }
 
+        private async Task<ReceiverStatus> CheckStatusAsync()
+        {
+            var status = Status;
+            if (status == null)
+            {
+                status = await GetStatusAsync();
+            }
+            return status;
+        }
+
         /// <summary>
         /// Checks the connection is well established
         /// </summary>
@@ -94,7 +104,7 @@ namespace GoogleCast.Channels
         /// <returns>an application object</returns>
         public async Task<Application> EnsureConnection(string ns)
         {
-            var status = await CheckStatus();
+            var status = await CheckStatusAsync();
             var application = status.Applications.First(a => a.Namespaces.Any(n => n.Name == ns));
             if (!IsConnected)
             {
@@ -119,7 +129,7 @@ namespace GoogleCast.Channels
             IEnumerable<Application> apps = applications;
             if (apps == null || !applications.Any())
             {
-                apps = (await CheckStatus()).Applications;
+                apps = (await CheckStatusAsync()).Applications;
                 if (apps == null || !applications.Any())
                 {
                     return null;
@@ -132,6 +142,15 @@ namespace GoogleCast.Channels
                 receiverStatusMessage = await SendAsync<ReceiverStatusMessage>(new StopMessage() { SessionId = application.SessionId });
             }
             return receiverStatusMessage.Status;
+        }
+
+        /// <summary>
+        /// Retrieves the status
+        /// </summary>
+        /// <returns>the status</returns>
+        public async Task<ReceiverStatus> GetStatusAsync()
+        {
+           return (await SendAsync<ReceiverStatusMessage>(new GetStatusMessage())).Status;
         }
     }
 }

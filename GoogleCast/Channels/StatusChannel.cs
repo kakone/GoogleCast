@@ -10,10 +10,8 @@ namespace GoogleCast.Channels
     /// </summary>
     /// <typeparam name="TStatus">status type</typeparam>
     /// <typeparam name="TStatusMessage">status message type</typeparam>
-    /// <typeparam name="TGetStatusMessage">get status message type</typeparam>
-    public abstract class StatusChannel<TStatus, TStatusMessage, TGetStatusMessage> : Channel, IStatusChannel<TStatus>
+    public abstract class StatusChannel<TStatus, TStatusMessage> : Channel, IStatusChannel<TStatus>
         where TStatusMessage : IStatusMessage<TStatus>
-        where TGetStatusMessage : IMessageWithId, new()
     {
         /// <summary>
         /// Raised when the status has changed
@@ -67,38 +65,6 @@ namespace GoogleCast.Channels
         protected virtual void OnStatusChanged()
         {
             StatusChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Creates a GetStatusMessage
-        /// </summary>
-        /// <returns>a GetStatusMessage</returns>
-        protected virtual TGetStatusMessage CreateGetStatusMessage()
-        {
-            return new TGetStatusMessage();
-        }
-
-        /// <summary>
-        /// Check the status
-        /// </summary>
-        /// <returns>the current status</returns>
-        protected async Task<TStatus> CheckStatus()
-        {
-            var status = Status;
-            if (status == null)
-            {
-                status = await GetStatusAsync();
-            }
-            return status;
-        }
-
-        /// <summary>
-        /// Retrieves the status
-        /// </summary>
-        /// <returns>the status</returns>
-        public async Task<TStatus> GetStatusAsync()
-        {
-            return (await SendAsync<TStatusMessage>(CreateGetStatusMessage())).Status;
-        }
+        }        
     }
 }
