@@ -18,7 +18,7 @@ var mediaChannel = sender.GetChannel<IMediaChannel>();
 await sender.LaunchAsync(mediaChannel);
 // Load and play Big Buck Bunny video
 var mediaStatus = await mediaChannel.LoadAsync(
-    new Media() { ContentId = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" });
+    new MediaInformation() { ContentId = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" });
 ```
 
 ## Download
