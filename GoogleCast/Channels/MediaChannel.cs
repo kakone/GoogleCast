@@ -1,6 +1,7 @@
 ﻿using GoogleCast.Messages;
 using GoogleCast.Messages.Media;
 using GoogleCast.Models.Media;
+using GoogleCast.Models.Receiver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,47 +26,42 @@ namespace GoogleCast.Channels
         /// </summary>
         public string ApplicationId { get; } = "CC1AD845";
 
-        private IReceiverChannel ReceiverChannel
+        private Task<Application> GetApplicationAsync()
         {
-            get { return Sender.GetChannel<IReceiverChannel>(); }
+            return Sender.GetChannel<IReceiverChannel>().EnsureConnectionAsync(Namespace);
+        }
+
+        private Task<MediaStatus> SendAsync(MediaSessionMessage message, bool mediaSessionIdRequired = true)
+        {
+            var mediaSessionId = Status?.First().MediaSessionId;
+            if (mediaSessionIdRequired && mediaSessionId == null)
+            {
+                throw new ArgumentNullException("MediaSessionId");
+            }
+            message.MediaSessionId = mediaSessionId;
+            return SendAsync((IMessageWithId)message);
         }
 
         private async Task<MediaStatus> SendAsync(IMessageWithId message)
         {
-            var application = await ReceiverChannel.EnsureConnection(Namespace);
-            switch (message)
-            {
-                case SessionMessage sessionMessage:
-                    sessionMessage.SessionId = application.SessionId;
-                    break;
-                case MediaSessionMessage mediaSessionMessage:
-                    SetMediaSessionId(mediaSessionMessage);
-                    break;
-            }
-
             try
             {
-                return (await SendAsync<MediaStatusMessage>(message, application.TransportId)).Status?.FirstOrDefault();
+                return (await SendAsync<MediaStatusMessage>(message, (await GetApplicationAsync()).TransportId)).Status?.FirstOrDefault();
             }
             catch (Exception)
             {
                 Status = null;
                 throw;
             }
-        }
-
-        private void SetMediaSessionId(MediaSessionMessage message)
-        {
-            message.MediaSessionId = Status?.First().MediaSessionId ?? throw new ArgumentNullException("MediaSessionId");
-        }      
+        }       
 
         /// <summary>
-        /// Retrieves the media status
+        /// Retrieves the status
         /// </summary>
-        /// <returns>the mediaa status</returns>
-        public async Task<MediaStatus> GetStatusAsync()
+        /// <returns>the status</returns>
+        public Task<MediaStatus> GetStatusAsync()
         {
-            return await SendAsync(new GetStatusMessage());
+            return SendAsync(new GetStatusMessage() { MediaSessionId = Status?.First().MediaSessionId }, false);
         }
 
         /// <summary>
@@ -81,7 +77,8 @@ namespace GoogleCast.Channels
             {
                 Media = media,
                 AutoPlay = autoPlay,
-                ActiveTrackIds = activeTrackIds
+                ActiveTrackIds = activeTrackIds,
+                SessionId = (await GetApplicationAsync()).SessionId
             });
         }
 

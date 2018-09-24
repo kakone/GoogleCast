@@ -26,7 +26,7 @@ namespace GoogleCast.Channels
         /// </summary>
         /// <param name="ns">namespace</param>
         /// <returns>an application object</returns>
-        Task<Application> EnsureConnection(string ns);
+        Task<Application> EnsureConnectionAsync(string ns);
 
         /// <summary>
         /// Sets the volume

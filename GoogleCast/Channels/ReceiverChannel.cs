@@ -102,7 +102,7 @@ namespace GoogleCast.Channels
         /// </summary>
         /// <param name="ns">namespace</param>
         /// <returns>an application object</returns>
-        public async Task<Application> EnsureConnection(string ns)
+        public async Task<Application> EnsureConnectionAsync(string ns)
         {
             var status = await CheckStatusAsync();
             var application = status.Applications.First(a => a.Namespaces.Any(n => n.Name == ns));
