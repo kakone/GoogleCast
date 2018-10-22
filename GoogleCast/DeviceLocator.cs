@@ -20,6 +20,7 @@ namespace GoogleCast
             var service = host.Services[PROTOCOL];
             return new Receiver()
             {
+                Id = service.Properties[0]["id"],
                 FriendlyName = service.Properties[0]["fn"],
                 IPEndPoint = new IPEndPoint(IPAddress.Parse(host.IPAddress), service.Port)
             };
