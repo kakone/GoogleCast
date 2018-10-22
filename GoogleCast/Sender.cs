@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,36 +60,33 @@ namespace GoogleCast
         private SemaphoreSlim SendSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
         private SemaphoreSlim EnsureConnectionSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
         private ConcurrentDictionary<int, object> WaitingTasks { get; } = new ConcurrentDictionary<int, object>();
-        private TaskCompletionSource<bool> ReceiveTcs { get; set; }
+        private CancellationTokenSource CancellationTokenSource { get; set; }
 
         /// <summary>
         /// Disconnects
         /// </summary>
-        public async Task DisconnectAsync()
+        public void Disconnect()
         {
             foreach (var channel in GetStatusChannels())
             {
-                channel.GetType().GetProperty("Status").SetValue(channel, null);
+                channel.Status = null;
             }
-            await Dispose();
+            Dispose();
         }
 
-        private async Task Dispose()
-        {
-            await Dispose(true);
-        }
-
-        private async Task Dispose(bool waitReceiveTask)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void Dispose()
         {
             if (TcpClient != null)
             {
                 WaitingTasks.Clear();
+                if (CancellationTokenSource != null)
+                {
+                    CancellationTokenSource.Cancel();
+                    CancellationTokenSource = null;
+                }
                 Dispose(NetworkStream, () => NetworkStream = null);
                 Dispose(TcpClient, () => TcpClient = null);
-                if (waitReceiveTask && ReceiveTcs != null)
-                {
-                    await ReceiveTcs.Task;
-                }
                 OnDisconnected();
             }
         }
@@ -134,7 +131,7 @@ namespace GoogleCast
         /// <param name="receiver">receiver</param>
         public async Task ConnectAsync(IReceiver receiver)
         {
-            await Dispose();
+            Dispose();
 
             Receiver = receiver;
             var tcpClient = new TcpClient();
@@ -146,13 +143,15 @@ namespace GoogleCast
             await secureStream.AuthenticateAsClientAsync(host);
             NetworkStream = secureStream;
 
-            ReceiveTcs = new TaskCompletionSource<bool>();
             Receive();
             await GetChannel<IConnectionChannel>().ConnectAsync();
         }
 
         private void Receive()
         {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource = cancellationTokenSource;
             Task.Run(async () =>
             {
                 try
@@ -161,7 +160,7 @@ namespace GoogleCast
                     var messageTypes = ServiceProvider.GetService<IMessageTypes>();
                     while (true)
                     {
-                        var buffer = await ReadAsync(4);
+                        var buffer = await ReadAsync(4, cancellationToken);
                         if (BitConverter.IsLittleEndian)
                         {
                             Array.Reverse(buffer);
@@ -170,7 +169,7 @@ namespace GoogleCast
                         CastMessage castMessage;
                         using (var ms = new MemoryStream())
                         {
-                            await ms.WriteAsync(await ReadAsync(length), 0, length);
+                            await ms.WriteAsync(await ReadAsync(length, cancellationToken), 0, length, cancellationToken);
                             ms.Position = 0;
                             castMessage = Serializer.Deserialize<CastMessage>(ms);
                         }
@@ -199,8 +198,8 @@ namespace GoogleCast
                 }
                 catch (Exception)
                 {
-                    await Dispose(false);
-                    ReceiveTcs.SetResult(true);
+                    CancellationTokenSource = null;
+                    Dispose();
                 }
             });
         }
@@ -214,13 +213,13 @@ namespace GoogleCast
             }
         }
 
-        private async Task<byte[]> ReadAsync(int bufferLength)
+        private async Task<byte[]> ReadAsync(int bufferLength, CancellationToken cancellationToken)
         {
             var buffer = new byte[bufferLength];
             int nb, length = 0;
             while (length < bufferLength)
             {
-                nb = await NetworkStream.ReadAsync(buffer, length, bufferLength - length);
+                nb = await NetworkStream.ReadAsync(buffer, length, bufferLength - length, cancellationToken);
                 if (nb == 0)
                 {
                     throw new InvalidOperationException();
@@ -350,10 +349,9 @@ namespace GoogleCast
             return await taskCompletionSource.Task.TimeoutAfter(RECEIVE_TIMEOUT);
         }
 
-        private IEnumerable<IChannel> GetStatusChannels()
+        private IEnumerable<IStatusChannel> GetStatusChannels()
         {
-            var statusChannelType = typeof(IStatusChannel<>);
-            return Channels.Where(c => c.GetType().GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == statusChannelType));
+            return Channels.OfType<IStatusChannel>();
         }
 
         /// <summary>
@@ -362,7 +360,7 @@ namespace GoogleCast
         /// <returns>a dictionnary of namespace/status</returns>
         public IDictionary<string, object> GetStatuses()
         {
-            return GetStatusChannels().ToDictionary(c => c.Namespace, c => c.GetType().GetProperty("Status").GetValue(c));
+            return GetStatusChannels().ToDictionary(c => c.Namespace, c => c.Status);
         }
 
         /// <summary>
@@ -372,13 +370,13 @@ namespace GoogleCast
         public void RestoreStatuses(IDictionary<string, object> statuses)
         {
             var channels = GetStatusChannels();
-            IChannel channel;
+            IStatusChannel channel;
             foreach (var keyValuePair in statuses)
             {
                 channel = channels.FirstOrDefault(c => c.Namespace == keyValuePair.Key);
                 if (channel != null)
                 {
-                    channel.GetType().GetProperty("Status").SetValue(channel, keyValuePair.Value);
+                    channel.Status = keyValuePair.Value;
                 }
             }
         }

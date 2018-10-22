@@ -33,7 +33,7 @@ namespace GoogleCast
         /// <summary>
         /// Disconnects
         /// </summary>
-        Task DisconnectAsync();
+        void Disconnect();
 
         /// <summary>
         /// Launches an application

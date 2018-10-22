@@ -127,10 +127,10 @@ namespace GoogleCast.Channels
         public async Task<ReceiverStatus> StopAsync(params Application[] applications)
         {
             IEnumerable<Application> apps = applications;
-            if (apps == null || !applications.Any())
+            if (apps == null || !apps.Any())
             {
                 apps = (await CheckStatusAsync()).Applications;
-                if (apps == null || !applications.Any())
+                if (apps == null || !apps.Any())
                 {
                     return null;
                 }

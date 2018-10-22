@@ -13,9 +13,9 @@
     <PackageProjectUrl>https://github.com/kakone/GoogleCast</PackageProjectUrl>
     <PackageTags>google cast googlecast chromecast</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <AssemblyVersion>1.6.5.0</AssemblyVersion>
-    <FileVersion>1.6.5.0</FileVersion>
-    <Version>1.6.5</Version>
+    <AssemblyVersion>1.6.7.0</AssemblyVersion>
+    <FileVersion>1.6.7.0</FileVersion>
+    <Version>1.6.7</Version>
     <PackageIconUrl>https://github.com/kakone/GoogleCast/raw/master/GoogleCast.png</PackageIconUrl>
   </PropertyGroup>
 

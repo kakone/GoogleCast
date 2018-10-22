@@ -33,7 +33,7 @@ namespace GoogleCast.Channels
         {
             if (message is CloseMessage)
             {
-                await Sender.DisconnectAsync();
+                Sender.Disconnect();
             }
             await base.OnMessageReceivedAsync(message);
         }

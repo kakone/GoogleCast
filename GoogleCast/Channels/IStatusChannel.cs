@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Text;
 
 namespace GoogleCast.Channels
 {
     /// <summary>
     /// Interface for a status channel
     /// </summary>
-    /// <typeparam name="TStatus">status type</typeparam>
-    public interface IStatusChannel<TStatus> : IChannel
+    public interface IStatusChannel : IChannel
     {
         /// <summary>
-        /// Raised when the status has changed
+        /// Gets or sets the status
         /// </summary>
-        event EventHandler StatusChanged;
-
-        /// <summary>
-        /// Gets the status
-        /// </summary>
-        TStatus Status { get; }
+        object Status { get; set; }
     }
 }

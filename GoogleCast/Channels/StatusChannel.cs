@@ -33,7 +33,7 @@ namespace GoogleCast.Channels
         public TStatus Status
         {
             get { return _status; }
-            protected set
+            private set
             {
                 if (!EqualityComparer<TStatus>.Default.Equals(_status, value))
                 {
@@ -41,6 +41,12 @@ namespace GoogleCast.Channels
                     OnStatusChanged();
                 }
             }
+        }
+
+        object IStatusChannel.Status
+        {
+            get => Status;
+            set => Status = (TStatus)value;
         }
 
         /// <summary>
@@ -65,6 +71,6 @@ namespace GoogleCast.Channels
         protected virtual void OnStatusChanged()
         {
             StatusChanged?.Invoke(this, EventArgs.Empty);
-        }        
+        }       
     }
 }

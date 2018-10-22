@@ -18,10 +18,11 @@ namespace GoogleCast
         private Receiver CreateReceiver(IZeroconfHost host)
         {
             var service = host.Services[PROTOCOL];
+            var properties = service.Properties.First();
             return new Receiver()
             {
-                Id = service.Properties[0]["id"],
-                FriendlyName = service.Properties[0]["fn"],
+                Id = properties["id"],
+                FriendlyName = properties["fn"],
                 IPEndPoint = new IPEndPoint(IPAddress.Parse(host.IPAddress), service.Port)
             };
         }

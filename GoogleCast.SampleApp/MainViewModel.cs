@@ -25,6 +25,7 @@ namespace GoogleCast.SampleApp
         {
             DeviceLocator = deviceLocator;
             Sender = sender;
+            sender.Disconnected += (s, e) => PlayerState = "DISCONNECTED";
             sender.GetChannel<IMediaChannel>().StatusChanged += MediaChannelStatusChanged;
             sender.GetChannel<IReceiverChannel>().StatusChanged += ReceiverChannelStatusChanged;
             PlayCommand = new RelayCommand(async () => await Try(PlayAsync), () => AreButtonsEnabled);
@@ -184,7 +185,7 @@ namespace GoogleCast.SampleApp
             get
             {
                 var mediaChannel = Sender.GetChannel<IMediaChannel>();
-                return (mediaChannel.Status == null || !String.IsNullOrEmpty(mediaChannel.Status.FirstOrDefault()?.IdleReason));
+                return mediaChannel.Status == null || !string.IsNullOrEmpty(mediaChannel.Status.FirstOrDefault()?.IdleReason);
             }
         }
 

@@ -50,7 +50,7 @@ namespace GoogleCast.Channels
             }
             catch (Exception)
             {
-                Status = null;
+                ((IStatusChannel)this).Status = null;
                 throw;
             }
         }       
