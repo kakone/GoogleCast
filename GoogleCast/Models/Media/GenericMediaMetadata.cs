@@ -8,6 +8,7 @@ namespace GoogleCast.Models.Media
     [DataContract]
     [KnownType(typeof(GenericMediaMetadata))]
     [KnownType(typeof(MovieMetadata))]
+    [KnownType(typeof(MusicTrackMediaMetadata))]
     public class GenericMediaMetadata
     {
         /// <summary>
