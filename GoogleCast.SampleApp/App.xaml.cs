@@ -1,5 +1,6 @@
-﻿using GalaSoft.MvvmLight.Threading;
-using System.Windows;
+﻿using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
 namespace GoogleCast.SampleApp
 {
@@ -10,7 +11,12 @@ namespace GoogleCast.SampleApp
     {
         static App()
         {
-            DispatcherHelper.Initialize();
+            var services = new ServiceCollection();
+            services.AddGoogleCast();
+            services.AddScoped<IDeviceLocator, DeviceLocator>();
+            services.AddScoped<ISender, Sender>();
+            services.AddScoped<MainViewModel>();
+            Ioc.Default.ConfigureServices(services.BuildServiceProvider());
         }
     }
 }

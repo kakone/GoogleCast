@@ -6,6 +6,7 @@
         mc:Ignorable="d"
         Title="GoogleCast" Height="200" Width="784"
         ResizeMode="CanResizeWithGrip"
+        Loaded="WindowLoadedAsync"
         DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}">
     <Grid>
         <Grid.RowDefinitions>

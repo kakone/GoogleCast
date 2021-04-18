@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace GoogleCast.SampleApp
 {
@@ -13,6 +14,16 @@ namespace GoogleCast.SampleApp
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private new MainViewModel DataContext => (MainViewModel)base.DataContext;
+
+        private async void WindowLoadedAsync(object sender, RoutedEventArgs e)
+        {
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                await DataContext.RefreshAsync();
+            }
         }
     }
 }

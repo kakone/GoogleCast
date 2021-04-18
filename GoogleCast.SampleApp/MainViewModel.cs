@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using GoogleCast.Channels;
 using GoogleCast.Models.Media;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace GoogleCast.SampleApp
 {
     /// <summary>
     /// Main view model
     /// </summary>
-    class MainViewModel : ViewModelBase
+    public class MainViewModel : ObservableObject
     {
         /// <summary>
         /// Initializes a new instance of <see cref="MainViewModel"/> class
@@ -32,11 +31,6 @@ namespace GoogleCast.SampleApp
             PauseCommand = new RelayCommand(async () => await TryAsync(PauseAsync), () => AreButtonsEnabled);
             StopCommand = new RelayCommand(async () => await TryAsync(StopAsync), () => AreButtonsEnabled);
             RefreshCommand = new RelayCommand(async () => await TryAsync(RefreshAsync), () => IsLoaded);
-
-            if (!IsInDesignMode)
-            {
-                Task.Run(RefreshAsync);
-            }
         }
 
         private IDeviceLocator DeviceLocator { get; }
@@ -49,7 +43,7 @@ namespace GoogleCast.SampleApp
         public IEnumerable<IReceiver>? Receivers
         {
             get => _receivers;
-            private set => Set(nameof(Receivers), ref _receivers, value);
+            private set => SetProperty(ref _receivers, value);
         }
 
         private bool IsInitialized { get; set; }
@@ -68,8 +62,8 @@ namespace GoogleCast.SampleApp
                 {
                     _selectedReceiver = value;
                     IsInitialized = false;
-                    RaisePropertyChanged(nameof(SelectedReceiver));
-                    RaiseButtonsCommandsCanExecuteChanged();
+                    OnPropertyChanged(nameof(SelectedReceiver));
+                    NotifyButtonsCommandsCanExecuteChanged();
                 }
             }
         }
@@ -86,9 +80,9 @@ namespace GoogleCast.SampleApp
                 if (_isLoaded != value)
                 {
                     _isLoaded = value;
-                    RaisePropertyChanged(nameof(IsLoaded));
-                    RefreshCommand.RaiseCanExecuteChanged();
-                    RaiseButtonsCommandsCanExecuteChanged();
+                    OnPropertyChanged(nameof(IsLoaded));
+                    RefreshCommand.NotifyCanExecuteChanged();
+                    NotifyButtonsCommandsCanExecuteChanged();
                 }
             }
         }
@@ -105,7 +99,7 @@ namespace GoogleCast.SampleApp
         public string? PlayerState
         {
             get => _playerState;
-            private set => Set(nameof(PlayerState), ref _playerState, value);
+            private set => SetProperty(ref _playerState, value);
         }
 
         private string _link = "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/DesigningForGoogleCast.mp4";
@@ -121,8 +115,8 @@ namespace GoogleCast.SampleApp
                 {
                     _link = value;
                     IsInitialized = false;
-                    RaisePropertyChanged(nameof(Link));
-                    RaiseButtonsCommandsCanExecuteChanged();
+                    OnPropertyChanged(nameof(Link));
+                    NotifyButtonsCommandsCanExecuteChanged();
                 }
             }
         }
@@ -134,7 +128,7 @@ namespace GoogleCast.SampleApp
         public string Subtitle
         {
             get => _subtitle;
-            set => Set(nameof(Subtitle), ref _subtitle, value);
+            set => SetProperty(ref _subtitle, value);
         }
 
         private bool _isMuted;
@@ -149,13 +143,13 @@ namespace GoogleCast.SampleApp
                 if (_isMuted != value)
                 {
                     _isMuted = value;
-                    RaisePropertyChanged(nameof(IsMuted));
+                    OnPropertyChanged(nameof(IsMuted));
                     Task.Run(SetIsMutedAsync);
                 }
             }
         }
 
-        public float _volume = 1;
+        private float _volume = 1;
         /// <summary>
         /// Gets or sets the volume
         /// </summary>
@@ -171,7 +165,7 @@ namespace GoogleCast.SampleApp
                         IsMuted = false;
                     }
                     _volume = value;
-                    RaisePropertyChanged(nameof(Volume));
+                    OnPropertyChanged(nameof(Volume));
                     Task.Run(SetVolumeAsync);
                 }
             }
@@ -203,12 +197,12 @@ namespace GoogleCast.SampleApp
         /// </summary>
         public RelayCommand RefreshCommand { get; }
 
-        private void RaiseButtonsCommandsCanExecuteChanged()
+        private void NotifyButtonsCommandsCanExecuteChanged()
         {
-            RaisePropertyChanged(nameof(AreButtonsEnabled));
-            PlayCommand.RaiseCanExecuteChanged();
-            PauseCommand.RaiseCanExecuteChanged();
-            StopCommand.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(AreButtonsEnabled));
+            PlayCommand.NotifyCanExecuteChanged();
+            PauseCommand.NotifyCanExecuteChanged();
+            StopCommand.NotifyCanExecuteChanged();
         }
 
         private async Task TryAsync(Func<Task> action)
@@ -305,15 +299,16 @@ namespace GoogleCast.SampleApp
             }
         }
 
-        private async Task RefreshAsync()
+        /// <summary>
+        /// Finds the receivers
+        /// </summary>
+        /// <returns>a <see cref="Task"/> that represents the asynchronous operation</returns>
+        public async Task RefreshAsync()
         {
-            await DispatcherHelper.RunAsync(async () =>
-            {
-                IsLoaded = false;
-                Receivers = await DeviceLocator.FindReceiversAsync();
-                SelectedReceiver = Receivers.FirstOrDefault();
-                IsLoaded = true;
-            });
+            IsLoaded = false;
+            Receivers = await DeviceLocator.FindReceiversAsync();
+            SelectedReceiver = Receivers.FirstOrDefault();
+            IsLoaded = true;
         }
 
         private async Task SetVolumeAsync()
@@ -326,9 +321,9 @@ namespace GoogleCast.SampleApp
             await SendChannelCommandAsync<IReceiverChannel>(IsStopped, null, async c => await c.SetIsMutedAsync(IsMuted));
         }
 
-        private void MediaChannelStatusChanged(object sender, EventArgs e)
+        private void MediaChannelStatusChanged(object? sender, EventArgs e)
         {
-            var status = ((IMediaChannel)sender).Status?.FirstOrDefault();
+            var status = (sender as IMediaChannel)?.Status?.FirstOrDefault();
             var playerState = status?.PlayerState;
             if (playerState == "IDLE" && !string.IsNullOrEmpty(status!.IdleReason))
             {
@@ -337,11 +332,11 @@ namespace GoogleCast.SampleApp
             PlayerState = playerState;
         }
 
-        private void ReceiverChannelStatusChanged(object sender, EventArgs e)
+        private void ReceiverChannelStatusChanged(object? sender, EventArgs e)
         {
             if (!IsInitialized)
             {
-                var status = ((IReceiverChannel)sender).Status;
+                var status = (sender as IReceiverChannel)?.Status;
                 if (status != null)
                 {
                     if (status.Volume.Level != null)
