@@ -31,19 +31,14 @@ namespace GoogleCast
         /// <summary>
         /// Finds the available receivers
         /// </summary>
+        /// <param name="networkInterface">optional specific network interface</param>
         /// <returns>a collection of receivers</returns>
-        public async Task<IEnumerable<IReceiver>> FindReceiversAsync()
+        public async Task<IEnumerable<IReceiver>> FindReceiversAsync(NetworkInterface networkInterface = null)
         {
-            return (await ZeroconfResolver.ResolveAsync(PROTOCOL)).Select(CreateReceiver);
-        }
-
-        /// <summary>
-        /// Finds the available receivers on specific network interface
-        /// </summary>
-        /// <returns>a collection of receivers</returns>
-        public async Task<IEnumerable<IReceiver>> FindReceiversAsync(NetworkInterface networkInterface)
-        {
-            return (await ZeroconfResolver.ResolveAsync(PROTOCOL, netInterfacesToSendRequestOn:new NetworkInterface[] { networkInterface })).Select(CreateReceiver);
+            return (await ZeroconfResolver.ResolveAsync(
+                    PROTOCOL,
+                    netInterfacesToSendRequestOn: networkInterface == null ? null : new[] { networkInterface }))
+                .Select(CreateReceiver);
         }
 
         /// <summary>

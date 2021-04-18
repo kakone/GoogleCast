@@ -13,15 +13,10 @@ namespace GoogleCast
         /// <summary>
         /// Finds the available receivers
         /// </summary>
+        /// <param name="networkInterface">optional specific network interface</param>
         /// <returns>a collection of receivers</returns>
-        Task<IEnumerable<IReceiver>> FindReceiversAsync();
+        Task<IEnumerable<IReceiver>> FindReceiversAsync(NetworkInterface networkInterface = null);
 
-        /// <summary>
-        /// Finds the available receivers on network interface
-        /// </summary>
-        /// <returns>a collection of receivers</returns>
-        Task<IEnumerable<IReceiver>> FindReceiversAsync(NetworkInterface networkInterface);
-        
         /// <summary>
         /// Finds the available receivers in continuous way
         /// </summary>
