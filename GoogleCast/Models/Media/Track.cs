@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 
 namespace GoogleCast.Models.Media
 {
@@ -21,17 +22,18 @@ namespace GoogleCast.Models.Media
         public TrackType Type { get; set; } = TrackType.Text;
 
         [DataMember(Name = "type")]
+        [SuppressMessage("CodeQuality", "IDE0051")]
         private string TypeString
         {
-            get { return Type.GetName(); }
-            set { Type = EnumHelper.Parse<TrackType>(value); }
+            get => Type.GetName();
+            set => Type = EnumHelper.Parse<TrackType>(value);
         }
 
         /// <summary>
         /// Gets or sets the MIME type of the track content
         /// </summary>
         [DataMember(Name = "trackContentType")]
-        public string TrackContentType { get; set; } = "text/vtt";
+        public string? TrackContentType { get; set; } = "text/vtt";
 
         /// <summary>
         /// Gets or sets the identifier of the track’s content
@@ -39,32 +41,33 @@ namespace GoogleCast.Models.Media
         /// <remarks>it can be the url of the track or any other identifier that allows the receiver to find the content 
         /// (when the track is not inband or included in the manifest)</remarks>
         [DataMember(Name = "trackContentId")]
-        public string TrackContentId { get; set; }
+        public string? TrackContentId { get; set; }
 
         /// <summary>
         /// Gets or sets the type of text track
         /// </summary>
         [IgnoreDataMember]
-        public TextTrackType SubType { get; set; }
+        public TextTrackType? SubType { get; set; }
 
         [DataMember(Name = "subType")]
-        private string SubTypeString
+        [SuppressMessage("CodeQuality", "IDE0051")]
+        private string? SubTypeString
         {
-            get { return SubType.GetName(); }
-            set { SubType = EnumHelper.Parse<TextTrackType>(value); }
+            get => SubType.GetName();
+            set => SubType = EnumHelper.ParseNullable<TextTrackType>(value);
         }
 
         /// <summary>
         /// Gets or sets a descriptive, human readable name for the track
         /// </summary>
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the language tag as per RFC 5646
         /// </summary>
         /// <remarks>mandatory when the subtype is Subtitles</remarks>
         [DataMember(Name = "language")]
-        public string Language { get; set; }
+        public string? Language { get; set; }
     }
 }

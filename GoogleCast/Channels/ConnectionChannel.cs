@@ -1,6 +1,6 @@
-﻿using GoogleCast.Messages;
+﻿using System.Threading.Tasks;
+using GoogleCast.Messages;
 using GoogleCast.Messages.Connection;
-using System.Threading.Tasks;
 
 namespace GoogleCast.Channels
 {
@@ -16,24 +16,18 @@ namespace GoogleCast.Channels
         {
         }
 
-        /// <summary>
-        /// Connects 
-        /// </summary>
-        /// <param name="destinationId">destination identifier</param>
+        /// <inheritdoc/>
         public async Task ConnectAsync(string destinationId)
         {
             await SendAsync(new ConnectMessage(), destinationId);
         }
 
-        /// <summary>
-        /// Called when a message for this channel is received
-        /// </summary>
-        /// <param name="message">message to process</param>
+        /// <inheritdoc/>
         public async override Task OnMessageReceivedAsync(IMessage message)
         {
             if (message is CloseMessage)
             {
-                Sender.Disconnect();
+                Sender!.Disconnect();
             }
             await base.OnMessageReceivedAsync(message);
         }

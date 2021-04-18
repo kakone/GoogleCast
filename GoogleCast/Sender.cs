@@ -1,9 +1,4 @@
-﻿using GoogleCast.Channels;
-using GoogleCast.Messages;
-using GoogleCast.Models.Receiver;
-using Microsoft.Extensions.DependencyInjection;
-using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +10,11 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using GoogleCast.Channels;
+using GoogleCast.Messages;
+using GoogleCast.Models.Receiver;
+using Microsoft.Extensions.DependencyInjection;
+using ProtoBuf;
 
 namespace GoogleCast
 {
@@ -25,10 +25,8 @@ namespace GoogleCast
     {
         private const int RECEIVE_TIMEOUT = 30000;
 
-        /// <summary>
-        /// Raised when the sender is disconnected
-        /// </summary>
-        public event EventHandler Disconnected;
+        /// <inheritdoc/>
+        public event EventHandler? Disconnected;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Sender"/> class
@@ -54,17 +52,15 @@ namespace GoogleCast
 
         private IServiceProvider ServiceProvider { get; }
         private IEnumerable<IChannel> Channels { get; set; }
-        private IReceiver Receiver { get; set; }
-        private Stream NetworkStream { get; set; }
-        private TcpClient TcpClient { get; set; }
+        private IReceiver? Receiver { get; set; }
+        private Stream? NetworkStream { get; set; }
+        private TcpClient? TcpClient { get; set; }
         private SemaphoreSlim SendSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
         private SemaphoreSlim EnsureConnectionSemaphoreSlim { get; } = new SemaphoreSlim(1, 1);
         private ConcurrentDictionary<int, object> WaitingTasks { get; } = new ConcurrentDictionary<int, object>();
-        private CancellationTokenSource CancellationTokenSource { get; set; }
+        private CancellationTokenSource? CancellationTokenSource { get; set; }
 
-        /// <summary>
-        /// Disconnects
-        /// </summary>
+        /// <inheritdoc/>
         public void Disconnect()
         {
             foreach (var channel in GetStatusChannels())
@@ -91,7 +87,7 @@ namespace GoogleCast
             }
         }
 
-        private void Dispose(IDisposable disposable, Action action)
+        private void Dispose(IDisposable? disposable, Action action)
         {
             if (disposable != null)
             {
@@ -115,20 +111,13 @@ namespace GoogleCast
             Disconnected?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Gets a channel
-        /// </summary>
-        /// <typeparam name="TChannel">channel type</typeparam>
-        /// <returns>a channel</returns>
+        /// <inheritdoc/>
         public TChannel GetChannel<TChannel>() where TChannel : IChannel
         {
             return Channels.OfType<TChannel>().FirstOrDefault();
         }
 
-        /// <summary>
-        /// Connects to a receiver
-        /// </summary>
-        /// <param name="receiver">receiver</param>
+        /// <inheritdoc/>
         public async Task ConnectAsync(IReceiver receiver)
         {
             Dispose();
@@ -157,7 +146,7 @@ namespace GoogleCast
                 try
                 {
                     var channels = Channels;
-                    var messageTypes = ServiceProvider.GetService<IMessageTypes>();
+                    var messageTypes = ServiceProvider.GetRequiredService<IMessageTypes>();
                     while (true)
                     {
                         var buffer = await ReadAsync(4, cancellationToken);
@@ -174,17 +163,17 @@ namespace GoogleCast
                             castMessage = Serializer.Deserialize<CastMessage>(ms);
                         }
                         var payload = (castMessage.PayloadType == PayloadType.Binary ?
-                            Encoding.UTF8.GetString(castMessage.PayloadBinary) : castMessage.PayloadUtf8);
+                            Encoding.UTF8.GetString(castMessage.PayloadBinary) : castMessage.PayloadUtf8)!;
                         Debug.WriteLine($"RECEIVED: {castMessage.Namespace} : {payload}");
                         var channel = channels.FirstOrDefault(c => c.Namespace == castMessage.Namespace);
                         if (channel != null)
                         {
-                            var message = JsonSerializer.Deserialize<MessageWithId>(payload);
-                            if (messageTypes.TryGetValue(message.Type, out Type type))
+                            var message = JsonSerializer.Deserialize<MessageWithId>(payload)!;
+                            if (messageTypes.TryGetValue(message.Type, out var type))
                             {
                                 try
                                 {
-                                    var response = (IMessage)JsonSerializer.Deserialize(type, payload);
+                                    var response = (IMessage)JsonSerializer.Deserialize(type, payload)!;
                                     await channel.OnMessageReceivedAsync(response);
                                     TaskCompletionSourceInvoke(message, "SetResult", response);
                                 }
@@ -204,9 +193,9 @@ namespace GoogleCast
             });
         }
 
-        private void TaskCompletionSourceInvoke(MessageWithId message, string method, object parameter, Type[] types = null)
+        private void TaskCompletionSourceInvoke(MessageWithId message, string method, object parameter, Type[]? types = null)
         {
-            if (message.HasRequestId && WaitingTasks.TryRemove(message.RequestId, out object tcs))
+            if (message.HasRequestId && WaitingTasks.TryRemove(message.RequestId, out var tcs))
             {
                 var tcsType = tcs.GetType();
                 (types == null ? tcsType.GetMethod(method) : tcsType.GetMethod(method, types)).Invoke(tcs, new object[] { parameter });
@@ -219,7 +208,7 @@ namespace GoogleCast
             int nb, length = 0;
             while (length < bufferLength)
             {
-                nb = await NetworkStream.ReadAsync(buffer, length, bufferLength - length, cancellationToken);
+                nb = await NetworkStream!.ReadAsync(buffer, length, bufferLength - length, cancellationToken);
                 if (nb == 0)
                 {
                     throw new InvalidOperationException();
@@ -229,7 +218,7 @@ namespace GoogleCast
             return buffer;
         }
 
-        private async Task EnsureConnection()
+        private async Task EnsureConnectionAsync()
         {
             if (TcpClient == null && Receiver != null)
             {
@@ -250,7 +239,7 @@ namespace GoogleCast
 
         private async Task SendAsync(CastMessage castMessage)
         {
-            await EnsureConnection();
+            await EnsureConnectionAsync();
 
             await SendSemaphoreSlim.WaitAsync();
             try
@@ -268,7 +257,7 @@ namespace GoogleCast
                 {
                     Array.Reverse(header);
                 }
-                var networkStream = NetworkStream;
+                var networkStream = NetworkStream!;
                 await networkStream.WriteAsync(header, 0, header.Length);
                 await networkStream.WriteAsync(message, 0, message.Length);
                 await networkStream.FlushAsync();
@@ -289,42 +278,25 @@ namespace GoogleCast
             };
         }
 
-        /// <summary>
-        /// Launches an application
-        /// </summary>
-        /// <typeparam name="TAppChannel">application channel type</typeparam>
-        /// <returns>receiver status</returns>
+        /// <inheritdoc/>
         public async Task<ReceiverStatus> LaunchAsync<TAppChannel>() where TAppChannel : IApplicationChannel
         {
             return await LaunchAsync(GetChannel<TAppChannel>());
         }
 
-        /// <summary>
-        /// Launches an application
-        /// </summary>
-        /// <param name="applicationChannel">application channel</param>
-        /// <returns>receiver status</returns>
+        /// <inheritdoc/>
         public async Task<ReceiverStatus> LaunchAsync(IApplicationChannel applicationChannel)
         {
             return await LaunchAsync(applicationChannel.ApplicationId);
         }
 
-        /// <summary>
-        /// Launches an application
-        /// </summary>
-        /// <param name="applicationId">application identifier</param>
-        /// <returns>receiver status</returns>
+        /// <inheritdoc/>
         public async Task<ReceiverStatus> LaunchAsync(string applicationId)
         {
             return await GetChannel<IReceiverChannel>().LaunchAsync(applicationId);
         }
 
-        /// <summary>
-        /// Sends a message
-        /// </summary>
-        /// <param name="ns">namespace</param>
-        /// <param name="message">message to send</param>
-        /// <param name="destinationId">destination identifier</param>
+        /// <inheritdoc/>
         public async Task SendAsync(string ns, IMessage message, string destinationId)
         {
             var castMessage = CreateCastMessage(ns, destinationId);
@@ -332,14 +304,7 @@ namespace GoogleCast
             await SendAsync(castMessage);
         }
 
-        /// <summary>
-        /// Sends a message
-        /// </summary>
-        /// <typeparam name="TResponse">response type</typeparam>
-        /// <param name="ns">namespace</param>
-        /// <param name="message">message to send</param>
-        /// <param name="destinationId">destination identifier</param>
-        /// <returns>the result</returns>
+        /// <inheritdoc/>
         public async Task<TResponse> SendAsync<TResponse>(string ns, IMessageWithId message, string destinationId)
             where TResponse : IMessageWithId
         {
@@ -354,19 +319,13 @@ namespace GoogleCast
             return Channels.OfType<IStatusChannel>();
         }
 
-        /// <summary>
-        /// Gets the differents statuses
-        /// </summary>
-        /// <returns>a dictionnary of namespace/status</returns>
-        public IDictionary<string, object> GetStatuses()
+        /// <inheritdoc/>
+        public IDictionary<string, object?> GetStatuses()
         {
             return GetStatusChannels().ToDictionary(c => c.Namespace, c => c.Status);
         }
 
-        /// <summary>
-        /// Restore the differents statuses
-        /// </summary>
-        /// <param name="statuses">statuses to restore</param>
+        /// <inheritdoc/>
         public void RestoreStatuses(IDictionary<string, object> statuses)
         {
             var channels = GetStatusChannels();

@@ -1,6 +1,6 @@
-﻿using GoogleCast.Models.Media;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GoogleCast.Models.Media;
 
 namespace GoogleCast.Channels
 {
@@ -13,7 +13,7 @@ namespace GoogleCast.Channels
         /// Retrieves the media status
         /// </summary>
         /// <returns>the media status</returns>
-        Task<MediaStatus> GetStatusAsync();
+        Task<MediaStatus?> GetStatusAsync();
 
         /// <summary>
         /// Loads a media
@@ -22,7 +22,7 @@ namespace GoogleCast.Channels
         /// <param name="autoPlay">true to play the media directly, false otherwise</param>
         /// <param name="activeTrackIds">tracks identifiers that should be active</param>
         /// <returns>media status</returns>
-        Task<MediaStatus> LoadAsync(MediaInformation media, bool autoPlay = true, params int[] activeTrackIds);
+        Task<MediaStatus?> LoadAsync(MediaInformation media, bool autoPlay = true, params int[] activeTrackIds);
 
         /// <summary>
         /// Loads a queue items
@@ -30,7 +30,7 @@ namespace GoogleCast.Channels
         /// <param name="repeatMode">queue repeat mode</param>
         /// <param name="medias">media items</param>
         /// <returns>media status</returns>
-        Task<MediaStatus> QueueLoadAsync(RepeatMode repeatMode, params MediaInformation[] medias);
+        Task<MediaStatus?> QueueLoadAsync(RepeatMode repeatMode, params MediaInformation[] medias);
 
         /// <summary>
         /// Loads a queue items
@@ -38,7 +38,7 @@ namespace GoogleCast.Channels
         /// <param name="repeatMode">queue repeat mode</param>
         /// <param name="queueItems">items to load</param>
         /// <returns>media status</returns>
-        Task<MediaStatus> QueueLoadAsync(RepeatMode repeatMode, params QueueItem[] queueItems);
+        Task<MediaStatus?> QueueLoadAsync(RepeatMode repeatMode, params QueueItem[] queueItems);
 
         /// <summary>
         /// Edits tracks info
@@ -47,31 +47,31 @@ namespace GoogleCast.Channels
         /// <param name="language">language for the tracks that should be active</param>
         /// <param name="activeTrackIds">track identifiers that should be active</param>
         /// <returns>media status</returns>
-        Task<MediaStatus> EditTracksInfoAsync(string language = null, bool enabledTextTracks = true, params int[] activeTrackIds);
+        Task<MediaStatus?> EditTracksInfoAsync(string? language = null, bool enabledTextTracks = true, params int[] activeTrackIds);
 
         /// <summary>
         /// Plays the media
         /// </summary>
         /// <returns>media status</returns>
-        Task<MediaStatus> PlayAsync();
+        Task<MediaStatus?> PlayAsync();
 
         /// <summary>
         /// Pauses the media
         /// </summary>
         /// <returns>media status</returns>
-        Task<MediaStatus> PauseAsync();
+        Task<MediaStatus?> PauseAsync();
 
         /// <summary>
         /// Stops the media
         /// </summary>
         /// <returns>media status</returns>
-        Task<MediaStatus> StopAsync();
+        Task<MediaStatus?> StopAsync();
 
         /// <summary>
         /// Seeks to the specified time
         /// </summary>
         /// <param name="seconds">time in seconds</param>
         /// <returns>media status</returns>
-        Task<MediaStatus> SeekAsync(double seconds);
+        Task<MediaStatus?> SeekAsync(double seconds);
     }
 }

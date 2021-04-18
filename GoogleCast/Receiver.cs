@@ -10,17 +10,17 @@ namespace GoogleCast
         /// <summary>
         /// Gets or sets the receiver identifier
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the friendly name
         /// </summary>
-        public string FriendlyName { get; set; }
+        public string FriendlyName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the network endpoint
         /// </summary>
-        public IPEndPoint IPEndPoint { get; set; }
+        public IPEndPoint IPEndPoint { get; set; } = default!;
 
         /// <summary>
         /// Determines whether the specified object is equal to the current object

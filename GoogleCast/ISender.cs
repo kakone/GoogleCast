@@ -1,9 +1,9 @@
-﻿using GoogleCast.Channels;
-using GoogleCast.Messages;
-using GoogleCast.Models.Receiver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GoogleCast.Channels;
+using GoogleCast.Messages;
+using GoogleCast.Models.Receiver;
 
 namespace GoogleCast
 {
@@ -79,7 +79,7 @@ namespace GoogleCast
         /// Gets the differents statuses
         /// </summary>
         /// <returns>a dictionnary of namespace/status</returns>
-        IDictionary<string, object> GetStatuses();
+        IDictionary<string, object?> GetStatuses();
 
         /// <summary>
         /// Restore the differents statuses

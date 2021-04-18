@@ -13,6 +13,6 @@ namespace GoogleCast.Messages
         /// Gets or sets the status
         /// </summary>
         [DataMember(Name = "status")]
-        public TStatus Status { get; set; }
+        public TStatus Status { get; set; } = default!;
     }
 }

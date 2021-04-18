@@ -27,11 +27,9 @@ namespace GoogleCast
         /// <returns>a JSON byte array</returns>
         public static byte[] Serialize(object obj)
         {
-            using (var ms = new MemoryStream())
-            {
-                new DataContractJsonSerializer(obj.GetType()).WriteObject(ms, obj);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            new DataContractJsonSerializer(obj.GetType()).WriteObject(ms, obj);
+            return ms.ToArray();
         }
 
         /// <summary>
@@ -40,9 +38,9 @@ namespace GoogleCast
         /// <typeparam name="T">object type</typeparam>
         /// <param name="utf8String">JSON UTF-8 string</param>
         /// <returns>the corresponding object</returns>
-        public static T Deserialize<T>(string utf8String) where T : class
+        public static T? Deserialize<T>(string utf8String) where T : class
         {
-            return (T)Deserialize(typeof(T), utf8String);
+            return (T?)Deserialize(typeof(T), utf8String);
         }
 
         /// <summary>
@@ -51,9 +49,9 @@ namespace GoogleCast
         /// <typeparam name="T">object type</typeparam>
         /// <param name="str">JSON byte array</param>
         /// <returns>the corresponding object</returns>
-        public static T Deserialize<T>(byte[] str) where T : class
+        public static T? Deserialize<T>(byte[] str) where T : class
         {
-            return (T)Deserialize(typeof(T), str);
+            return (T?)Deserialize(typeof(T), str);
         }
 
         /// <summary>
@@ -62,9 +60,9 @@ namespace GoogleCast
         /// <param name="type">object type</param>
         /// <param name="utf8String">JSON UTF-8 string</param>
         /// <returns>the corresponding object</returns>
-        public static object Deserialize(Type type, string utf8String)
+        public static object? Deserialize(Type type, string utf8String)
         {
-            return Deserialize(type, String.IsNullOrWhiteSpace(utf8String) ? null : Encoding.UTF8.GetBytes(utf8String));
+            return Deserialize(type, string.IsNullOrWhiteSpace(utf8String) ? null : Encoding.UTF8.GetBytes(utf8String));
         }
 
         /// <summary>
@@ -73,14 +71,12 @@ namespace GoogleCast
         /// <param name="type">object type</param>
         /// <param name="str">JSON byte array</param>
         /// <returns>the corresponding object</returns>
-        public static object Deserialize(Type type, byte[] str)
+        public static object? Deserialize(Type type, byte[]? str)
         {
             if (str != null)
             {
-                using (var ms = new MemoryStream(str))
-                {
-                    return new DataContractJsonSerializer(type).ReadObject(ms);
-                }
+                using var ms = new MemoryStream(str);
+                return new DataContractJsonSerializer(type).ReadObject(ms);
             }
 
             return null;

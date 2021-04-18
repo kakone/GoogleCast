@@ -1,9 +1,9 @@
-﻿using GoogleCast.Messages.Receiver;
-using GoogleCast.Models;
-using GoogleCast.Models.Receiver;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GoogleCast.Messages.Receiver;
+using GoogleCast.Models;
+using GoogleCast.Models.Receiver;
 
 namespace GoogleCast.Channels
 {
@@ -19,10 +19,8 @@ namespace GoogleCast.Channels
         {
         }
 
-        /// <summary>
-        /// Gets or sets the sender
-        /// </summary>
-        public override ISender Sender
+        /// <inheritdoc/>
+        public override ISender? Sender
         {
             set
             {
@@ -44,31 +42,19 @@ namespace GoogleCast.Channels
 
         private bool IsConnected { get; set; }
 
-        /// <summary>
-        /// Launches an application
-        /// </summary>
-        /// <param name="applicationId">application identifier</param>
-        /// <returns>receiver status</returns>
+        /// <inheritdoc/>
         public async Task<ReceiverStatus> LaunchAsync(string applicationId)
         {
             return (await SendAsync<ReceiverStatusMessage>(new LaunchMessage() { ApplicationId = applicationId })).Status;
         }
 
-        /// <summary>
-        /// Sets the volume
-        /// </summary>
-        /// <param name="level">volume level (0.0 to 1.0)</param>
-        /// <returns>receiver status</returns>
+        /// <inheritdoc/>
         public async Task<ReceiverStatus> SetVolumeAsync(float level)
         {
             return await SetVolumeAsync(level, null);
         }
 
-        /// <summary>
-        /// Sets a value indicating whether the audio should be muted
-        /// </summary>
-        /// <param name="isMuted">true if audio should be muted; otherwise, false</param>
-        /// <returns>receiver status</returns>
+        /// <inheritdoc/>
         public async Task<ReceiverStatus> SetIsMutedAsync(bool isMuted)
         {
             return await SetVolumeAsync(null, isMuted);
@@ -97,18 +83,14 @@ namespace GoogleCast.Channels
             return status;
         }
 
-        /// <summary>
-        /// Checks the connection is well established
-        /// </summary>
-        /// <param name="ns">namespace</param>
-        /// <returns>an application object</returns>
+        /// <inheritdoc/>
         public async Task<Application> EnsureConnectionAsync(string ns)
         {
             var status = await CheckStatusAsync();
             var application = status.Applications.First(a => a.Namespaces.Any(n => n.Name == ns));
             if (!IsConnected)
             {
-                await Sender.GetChannel<IConnectionChannel>().ConnectAsync(application.TransportId);
+                await Sender!.GetChannel<IConnectionChannel>().ConnectAsync(application.TransportId);
                 IsConnected = true;
             }
             return application;
@@ -119,12 +101,8 @@ namespace GoogleCast.Channels
             IsConnected = false;
         }
 
-        /// <summary>
-        /// Stops the current applications
-        /// </summary>
-        /// <param name="applications">applications to stop</param>
-        /// <returns>ReceiverStatus</returns>
-        public async Task<ReceiverStatus> StopAsync(params Application[] applications)
+        /// <inheritdoc/>
+        public async Task<ReceiverStatus?> StopAsync(params Application[] applications)
         {
             IEnumerable<Application> apps = applications;
             if (apps == null || !apps.Any())
@@ -136,21 +114,18 @@ namespace GoogleCast.Channels
                 }
             }
 
-            ReceiverStatusMessage receiverStatusMessage = null;
+            ReceiverStatusMessage? receiverStatusMessage = null;
             foreach (var application in apps)
             {
                 receiverStatusMessage = await SendAsync<ReceiverStatusMessage>(new StopMessage() { SessionId = application.SessionId });
             }
-            return receiverStatusMessage.Status;
+            return receiverStatusMessage?.Status;
         }
 
-        /// <summary>
-        /// Retrieves the status
-        /// </summary>
-        /// <returns>the status</returns>
+        /// <inheritdoc/>
         public async Task<ReceiverStatus> GetStatusAsync()
         {
-           return (await SendAsync<ReceiverStatusMessage>(new GetStatusMessage())).Status;
+            return (await SendAsync<ReceiverStatusMessage>(new GetStatusMessage())).Status;
         }
     }
 }

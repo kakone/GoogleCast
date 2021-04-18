@@ -1,5 +1,5 @@
-﻿using GoogleCast.Messages;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using GoogleCast.Messages;
 
 namespace GoogleCast.Channels
 {
@@ -26,15 +26,11 @@ namespace GoogleCast.Channels
             Namespace = $"{BASE_NAMESPACE}.{ns}";
         }
 
-        /// <summary>
-        /// Gets or sets the sender
-        /// </summary>
-        public virtual ISender Sender { get; set; }
+        /// <inheritdoc/>
+        public virtual ISender? Sender { get; set; }
 
-        /// <summary>
-        /// Gets the full namespace
-        /// </summary>
-        public string Namespace { get; protected set; }
+        /// <inheritdoc/>
+        public string Namespace { get; protected set; } = default!;
 
         /// <summary>
         /// Sends a message
@@ -43,7 +39,7 @@ namespace GoogleCast.Channels
         /// <param name="destinationId">destination identifier</param>
         protected async Task SendAsync(IMessage message, string destinationId = DefaultIdentifiers.DESTINATION_ID)
         {
-            await Sender.SendAsync(Namespace, message, destinationId);
+            await Sender!.SendAsync(Namespace, message, destinationId);
         }
 
         /// <summary>
@@ -53,15 +49,13 @@ namespace GoogleCast.Channels
         /// <param name="message">message to send</param>
         /// <param name="destinationId">destination identifier</param>
         /// <returns>the result</returns>
-        protected async Task<TResponse> SendAsync<TResponse>(IMessageWithId message, string destinationId = DefaultIdentifiers.DESTINATION_ID) where TResponse : IMessageWithId
+        protected async Task<TResponse> SendAsync<TResponse>(IMessageWithId message, string destinationId = DefaultIdentifiers.DESTINATION_ID)
+            where TResponse : IMessageWithId
         {
-            return await Sender.SendAsync<TResponse>(Namespace, message, destinationId);
+            return await Sender!.SendAsync<TResponse>(Namespace, message, destinationId);
         }
 
-        /// <summary>
-        /// Called when a message for this channel is received
-        /// </summary>
-        /// <param name="message">message to process</param>
+        /// <inheritdoc/>
         public virtual Task OnMessageReceivedAsync(IMessage message)
         {
             return Task.CompletedTask;

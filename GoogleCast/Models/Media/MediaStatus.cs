@@ -24,7 +24,7 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the player state
         /// </summary>
         [DataMember(Name = "playerState")]
-        public string PlayerState { get; set; }
+        public string PlayerState { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the current time
@@ -42,19 +42,19 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the volume
         /// </summary>
         [DataMember(Name = "volume")]
-        public Volume Volume { get; set; }
+        public Volume Volume { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the idle reason
         /// </summary>
         [DataMember(Name = "idleReason")]
-        public string IdleReason { get; set; }
+        public string? IdleReason { get; set; }
 
         /// <summary>
         /// Gets or sets the media
         /// </summary>
         [DataMember(Name = "media")]
-        public MediaInformation Media { get; set; }
+        public MediaInformation? Media { get; set; }
 
         /// <summary>
         /// Gets or sets the current item identifier
@@ -66,12 +66,12 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the extended status
         /// </summary>
         [DataMember(Name = "extendedStatus")]
-        public MediaStatus ExtendedStatus { get; set; }
+        public MediaStatus? ExtendedStatus { get; set; }
 
         /// <summary>
         /// Gets or sets the repeat mode
         /// </summary>
         [DataMember(Name = "repeatMode")]
-        public string RepeatMode { get; set; }
+        public string? RepeatMode { get; set; }
     }
 }

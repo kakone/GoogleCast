@@ -16,15 +16,12 @@ namespace GoogleCast.Channels
         {
         }
 
-        /// <summary>
-        /// Called when a message for this channel is received
-        /// </summary>
-        /// <param name="message">message to process</param>
+        /// <inheritdoc/>
         public override async Task OnMessageReceivedAsync(IMessage message)
         {
             switch (message)
             {
-                case PingMessage pingMessage:
+                case PingMessage:
                     await SendAsync(new PongMessage());
                     break;
             }

@@ -1,5 +1,5 @@
-﻿using GoogleCast.Models.Receiver;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using GoogleCast.Models.Receiver;
 
 namespace GoogleCast.Channels
 {
@@ -47,6 +47,6 @@ namespace GoogleCast.Channels
         /// </summary>
         /// <param name="applications">applications to stop</param>
         /// <returns>ReceiverStatus</returns>
-        Task<ReceiverStatus> StopAsync(params Application[] applications);
+        Task<ReceiverStatus?> StopAsync(params Application[] applications);
     }
 }

@@ -1,5 +1,5 @@
-﻿using GoogleCast.Models;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using GoogleCast.Models;
 
 namespace GoogleCast.Messages.Receiver
 {
@@ -13,6 +13,6 @@ namespace GoogleCast.Messages.Receiver
         /// Gets or sets the volume
         /// </summary>
         [DataMember(Name = "volume")]
-        public Volume Volume { get; set; }
+        public Volume Volume { get; set; } = default!;
     }
 }

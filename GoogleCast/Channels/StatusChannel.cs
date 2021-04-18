@@ -1,7 +1,7 @@
-﻿using GoogleCast.Messages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GoogleCast.Messages;
 
 namespace GoogleCast.Channels
 {
@@ -13,29 +13,27 @@ namespace GoogleCast.Channels
     public abstract class StatusChannel<TStatus, TStatusMessage> : Channel, IStatusChannel<TStatus>
         where TStatusMessage : IStatusMessage<TStatus>
     {
-        /// <summary>
-        /// Raised when the status has changed
-        /// </summary>
-        public event EventHandler StatusChanged;
+        /// <inheritdoc/>
+        public event EventHandler? StatusChanged;
 
         /// <summary>
         /// Initialization
-        /// </summary>
+        /// </summary>a
         /// <param name="ns">namespace</param>
         public StatusChannel(string ns) : base(ns)
         {
         }
 
-        private TStatus _status;
+        private TStatus? _status;
         /// <summary>
         /// Gets or sets the status
         /// </summary>
-        public TStatus Status
+        public TStatus? Status
         {
-            get { return _status; }
+            get => _status;
             private set
             {
-                if (!EqualityComparer<TStatus>.Default.Equals(_status, value))
+                if (!EqualityComparer<TStatus>.Default.Equals(_status!, value!))
                 {
                     _status = value;
                     OnStatusChanged();
@@ -43,16 +41,13 @@ namespace GoogleCast.Channels
             }
         }
 
-        object IStatusChannel.Status
+        object? IStatusChannel.Status
         {
             get => Status;
-            set => Status = (TStatus)value;
+            set => Status = (TStatus)value!;
         }
 
-        /// <summary>
-        /// Called when a message for this channel is received
-        /// </summary>
-        /// <param name="message">message to process</param>
+        /// <inheritdoc/>
         public override Task OnMessageReceivedAsync(IMessage message)
         {
             switch (message)
@@ -71,6 +66,6 @@ namespace GoogleCast.Channels
         protected virtual void OnStatusChanged()
         {
             StatusChanged?.Invoke(this, EventArgs.Empty);
-        }       
+        }
     }
 }

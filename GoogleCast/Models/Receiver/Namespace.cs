@@ -12,6 +12,6 @@ namespace GoogleCast.Models.Receiver
         /// Gets or sets the name
         /// </summary>
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
     }
 }

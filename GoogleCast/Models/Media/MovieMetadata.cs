@@ -20,6 +20,6 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the studio
         /// </summary>
         [DataMember(Name = "studio")]
-        public string Studio { get; set; }
+        public string? Studio { get; set; }
     }
 }

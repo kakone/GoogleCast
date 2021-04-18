@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Runtime.Serialization;
 
 namespace GoogleCast.Models.Media
@@ -17,7 +18,8 @@ namespace GoogleCast.Models.Media
         public Color? BackgroundColor { get; set; }
 
         [DataMember(Name = "backgroundColor", EmitDefaultValue = false)]
-        private string BackgroundColorString
+        [SuppressMessage("CodeQuality", "IDE0051")]
+        private string? BackgroundColorString
         {
             get => BackgroundColor.ToHexString();
             set => BackgroundColor = ColorHelper.FromNullableHexString(value);
@@ -31,7 +33,8 @@ namespace GoogleCast.Models.Media
         public Color? EdgeColor { get; set; }
 
         [DataMember(Name = "edgeColor", EmitDefaultValue = false)]
-        private string EdgeColorString
+        [SuppressMessage("CodeQuality", "IDE0051")]
+        private string? EdgeColorString
         {
             get => EdgeColor.ToHexString();
             set => EdgeColor = ColorHelper.FromNullableHexString(value);
@@ -41,13 +44,14 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the text track edge type
         /// </summary>
         [IgnoreDataMember]
-        public TextTrackEdgeType? EdgeType { get; set; }
+        public TextTrackEdgeType EdgeType { get; set; } = default!;
 
         [DataMember(Name = "edgeType", EmitDefaultValue = false)]
+        [SuppressMessage("CodeQuality", "IDE0051")]
         private string EdgeTypeString
         {
-            get { return EdgeType.GetName(); }
-            set { EdgeType = EnumHelper.ParseNullable<TextTrackEdgeType>(value); }
+            get => EdgeType.GetName();
+            set => EdgeType = EnumHelper.Parse<TextTrackEdgeType>(value);
         }
 
         /// <summary>
@@ -55,7 +59,7 @@ namespace GoogleCast.Models.Media
         /// </summary>
         /// <remarks>if the font is not available in the receiver, the fontGenericFamily will be used</remarks>
         [DataMember(Name = "fontFamily", EmitDefaultValue = false)]
-        public string FontFamily { get; set; }
+        public string FontFamily { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the text track generic family
@@ -64,10 +68,11 @@ namespace GoogleCast.Models.Media
         public TextTrackFontGenericFamily? FontGenericFamily { get; set; }
 
         [DataMember(Name = "fontGenericFamily", EmitDefaultValue = false)]
-        private string FontGenericFamilyString
+        [SuppressMessage("CodeQuality", "IDE0051")]
+        private string? FontGenericFamilyString
         {
-            get { return FontGenericFamily.GetName(); }
-            set { FontGenericFamily = EnumHelper.ParseNullable<TextTrackFontGenericFamily>(value); }
+            get => FontGenericFamily.GetName();
+            set => FontGenericFamily = EnumHelper.ParseNullable<TextTrackFontGenericFamily>(value);
         }
 
         /// <summary>
@@ -84,10 +89,11 @@ namespace GoogleCast.Models.Media
         public TextTrackFontStyle? FontStyle { get; set; }
 
         [DataMember(Name = "fontStyle", EmitDefaultValue = false)]
-        private string FontStyleString
+        [SuppressMessage("CodeQuality", "IDE0051")]
+        private string? FontStyleString
         {
-            get { return FontStyle.GetName(); }
-            set { FontStyle = EnumHelper.ParseNullable<TextTrackFontStyle>(value); }
+            get => FontStyle.GetName();
+            set => FontStyle = EnumHelper.ParseNullable<TextTrackFontStyle>(value);
         }
 
         /// <summary>
@@ -97,7 +103,8 @@ namespace GoogleCast.Models.Media
         public Color? ForegroundColor { get; set; }
 
         [DataMember(Name = "foregroundColor", EmitDefaultValue = false)]
-        private string ForegroundColorString
+        [SuppressMessage("CodeQuality", "IDE0051")]
+        private string? ForegroundColorString
         {
             get => ForegroundColor.ToHexString();
             set => ForegroundColor = ColorHelper.FromNullableHexString(value);
@@ -111,7 +118,8 @@ namespace GoogleCast.Models.Media
         public Color? WindowColor { get; set; }
 
         [DataMember(Name = "windowColor", EmitDefaultValue = false)]
-        private string WindowColorColorString
+        [SuppressMessage("CodeQuality", "IDE0051")]
+        private string? WindowColorColorString
         {
             get => WindowColor.ToHexString();
             set => WindowColor = ColorHelper.FromNullableHexString(value);

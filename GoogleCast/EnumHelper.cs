@@ -24,9 +24,9 @@ namespace GoogleCast
         /// <typeparam name="T">an enumeration type</typeparam>
         /// <param name="enumString">a nullable string containing the name to convert</param>
         /// <returns>an object of type T whose value is represented by enumString</returns>
-        public static T? ParseNullable<T>(string enumString) where T : struct, IConvertible
+        public static T? ParseNullable<T>(string? enumString) where T : struct, IConvertible
         {
-            return string.IsNullOrEmpty(enumString) ? (T?)null : Parse<T>(enumString);
+            return string.IsNullOrEmpty(enumString) ? null : Parse<T>(enumString!);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace GoogleCast
         /// <typeparam name="T">an enumeration type</typeparam>
         /// <param name="value">the value of a particular enumerated constant in terms of its underlying type</param>
         /// <returns>a string containing the name of the enumerated constant in enumType whose value is value; or null if no such constant is found</returns>
-        public static string GetName<T>(this T? value) where T : struct, IConvertible
+        public static string? GetName<T>(this T? value) where T : struct, IConvertible
         {
             return value == null ? null : GetName((T)value);
         }

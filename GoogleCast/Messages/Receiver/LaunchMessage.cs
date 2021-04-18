@@ -12,6 +12,6 @@ namespace GoogleCast.Messages.Receiver
         /// Gets or sets the application identifier
         /// </summary>
         [DataMember(Name = "appId")]
-        public string ApplicationId { get; set; }
+        public string ApplicationId { get; set; } = default!;
     }
 }

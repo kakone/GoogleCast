@@ -1,5 +1,5 @@
-﻿using GoogleCast.Messages;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using GoogleCast.Messages;
 
 namespace GoogleCast.Channels
 {
@@ -11,7 +11,7 @@ namespace GoogleCast.Channels
         /// <summary>
         /// Gets or sets the sender
         /// </summary>
-        ISender Sender { get; set; }
+        ISender? Sender { get; set; }
 
         /// <summary>
         /// Gets the full namespace

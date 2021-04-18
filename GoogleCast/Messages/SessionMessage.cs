@@ -12,6 +12,6 @@ namespace GoogleCast.Messages
         /// Gets or sets the session identifier
         /// </summary>
         [DataMember(Name = "sessionId")]
-        public string SessionId { get; set; }
+        public string SessionId { get; set; } = default!;
     }
 }

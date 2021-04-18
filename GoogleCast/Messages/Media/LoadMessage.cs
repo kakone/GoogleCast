@@ -1,6 +1,6 @@
-﻿using GoogleCast.Models.Media;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using GoogleCast.Models.Media;
 
 namespace GoogleCast.Messages.Media
 {
@@ -14,7 +14,7 @@ namespace GoogleCast.Messages.Media
         /// Gets or sets the metadata (including contentId) of the media to load
         /// </summary>
         [DataMember(Name = "media")]
-        public MediaInformation Media { get; set; }
+        public MediaInformation Media { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets a value indicating whether the media player will begin playing the content when it is loaded or not
@@ -27,6 +27,6 @@ namespace GoogleCast.Messages.Media
         /// </summary>
         /// <remarks>if the array is not provided, the default tracks will be active</remarks>
         [DataMember(Name = "activeTrackIds")]
-        public IEnumerable<int> ActiveTrackIds { get; set; }
+        public IEnumerable<int>? ActiveTrackIds { get; set; }
     }
 }

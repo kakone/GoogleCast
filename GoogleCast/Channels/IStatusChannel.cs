@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GoogleCast.Channels
+﻿namespace GoogleCast.Channels
 {
     /// <summary>
     /// Interface for a status channel
@@ -12,6 +8,6 @@ namespace GoogleCast.Channels
         /// <summary>
         /// Gets or sets the status
         /// </summary>
-        object Status { get; set; }
+        object? Status { get; set; }
     }
 }

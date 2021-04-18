@@ -13,7 +13,7 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the track identifiers that are active
         /// </summary>
         [DataMember(Name = "activeTrackIds", EmitDefaultValue = false)]
-        public IEnumerable<int> ActiveTrackIds { get; set; }
+        public IEnumerable<int>? ActiveTrackIds { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the media will automatically play
@@ -33,7 +33,7 @@ namespace GoogleCast.Models.Media
         /// Gets or sets the metadata (including contentId) of the playlist element
         /// </summary>
         [DataMember(Name = "media")]
-        public MediaInformation Media { get; set; }
+        public MediaInformation? Media { get; set; }
 
         /// <summary>
         /// Gets or sets the seconds from the beginning of the media to start playback

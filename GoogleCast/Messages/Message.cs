@@ -18,7 +18,7 @@ namespace GoogleCast.Messages
         }
 
         /// <summary>
-        /// Gets the message type
+        /// Gets or sets the message type
         /// </summary>
         [DataMember(Name = "type")]
         public string Type { get; set; }

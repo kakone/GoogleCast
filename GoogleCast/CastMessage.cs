@@ -30,24 +30,24 @@ namespace GoogleCast
         /// Gets or sets the namespace
         /// </summary>
         [ProtoMember(4, IsRequired = true, Name = "namespace")]
-        public string Namespace { get; set; }
+        public string Namespace { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the payload type
         /// </summary>
         [ProtoMember(5, IsRequired = true, Name = "payload_type")]
-        public PayloadType PayloadType { get; set; }
+        public PayloadType PayloadType { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the UTF-8 payload
         /// </summary>
         [ProtoMember(6, IsRequired = false, Name = "payload_utf8")]
-        public string PayloadUtf8 { get; set; }
+        public string? PayloadUtf8 { get; set; }
 
         /// <summary>
         /// Gets or sets the binary payload
         /// </summary>
         [ProtoMember(7, IsRequired = false, Name = "payload_binary")]
-        public byte[] PayloadBinary { get; set; }
+        public byte[]? PayloadBinary { get; set; }
     }
 }

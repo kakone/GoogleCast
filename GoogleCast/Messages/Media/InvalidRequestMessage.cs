@@ -14,7 +14,7 @@ namespace GoogleCast.Messages.Media
         /// Gets or sets the reason
         /// </summary>
         [DataMember(Name = "reason")]
-        public string Reason { get; set; }
+        public string Reason { get; set; } = default!;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)

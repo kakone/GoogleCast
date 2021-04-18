@@ -13,12 +13,12 @@ namespace GoogleCast.Models.Receiver
         /// Gets or sets the applications collection
         /// </summary>
         [DataMember(Name = "applications")]
-        public IEnumerable<Application> Applications { get; set; }
+        public IEnumerable<Application> Applications { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the volume
         /// </summary>
         [DataMember(Name = "volume")]
-        public Volume Volume { get; set; }
+        public Volume Volume { get; set; } = default!;
     }
 }

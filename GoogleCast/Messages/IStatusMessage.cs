@@ -9,6 +9,6 @@
         /// <summary>
         /// Gets the status
         /// </summary>
-        TStatus Status { get; }
+        TStatus? Status { get; }
     }
 }

@@ -28,12 +28,8 @@ namespace GoogleCast
             };
         }
 
-        /// <summary>
-        /// Finds the available receivers
-        /// </summary>
-        /// <param name="networkInterface">optional specific network interface</param>
-        /// <returns>a collection of receivers</returns>
-        public async Task<IEnumerable<IReceiver>> FindReceiversAsync(NetworkInterface networkInterface = null)
+        /// <inheritdoc/>
+        public async Task<IEnumerable<IReceiver>> FindReceiversAsync(NetworkInterface? networkInterface = null)
         {
             return (await ZeroconfResolver.ResolveAsync(
                     PROTOCOL,
@@ -41,10 +37,7 @@ namespace GoogleCast
                 .Select(CreateReceiver);
         }
 
-        /// <summary>
-        /// Finds the available receivers in continuous way
-        /// </summary>
-        /// <returns>a provider for notifications</returns>
+        /// <inheritdoc/>
         public IObservable<IReceiver> FindReceiversContinuous()
         {
             return ZeroconfResolver.ResolveContinuous(PROTOCOL).Select(CreateReceiver);

@@ -13,13 +13,13 @@ namespace GoogleCast.Models.Receiver
         /// Gets or sets the application identifier
         /// </summary>
         [DataMember(Name = "appId")]
-        public string AppId { get; set; }
+        public string AppId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the display name
         /// </summary>
         [DataMember(Name = "displayName")]
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets a value indicating whether the backdrop app is running or not 
@@ -31,24 +31,24 @@ namespace GoogleCast.Models.Receiver
         /// Gets or sets the namespaces
         /// </summary>
         [DataMember(Name = "namespaces")]
-        public IEnumerable<Namespace> Namespaces { get; set; }
+        public IEnumerable<Namespace> Namespaces { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the session identifier
         /// </summary>
         [DataMember(Name = "sessionId")]
-        public string SessionId { get; set; }
+        public string SessionId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the status text
         /// </summary>
         [DataMember(Name = "statusText")]
-        public string StatusText { get; set; }
+        public string? StatusText { get; set; }
 
         /// <summary>
         /// Gets or sets the transport identifier
         /// </summary>
         [DataMember(Name = "transportId")]
-        public string TransportId { get; set; }
+        public string TransportId { get; set; } = default!;
     }
 }

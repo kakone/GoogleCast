@@ -1,13 +1,13 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
-using GoogleCast.Channels;
-using GoogleCast.Models.Media;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
+using GoogleCast.Channels;
+using GoogleCast.Models.Media;
 
 namespace GoogleCast.SampleApp
 {
@@ -28,10 +28,10 @@ namespace GoogleCast.SampleApp
             sender.Disconnected += (s, e) => PlayerState = "DISCONNECTED";
             sender.GetChannel<IMediaChannel>().StatusChanged += MediaChannelStatusChanged;
             sender.GetChannel<IReceiverChannel>().StatusChanged += ReceiverChannelStatusChanged;
-            PlayCommand = new RelayCommand(async () => await Try(PlayAsync), () => AreButtonsEnabled);
-            PauseCommand = new RelayCommand(async () => await Try(PauseAsync), () => AreButtonsEnabled);
-            StopCommand = new RelayCommand(async () => await Try(StopAsync), () => AreButtonsEnabled);
-            RefreshCommand = new RelayCommand(async () => await Try(RefreshAsync), () => IsLoaded);
+            PlayCommand = new RelayCommand(async () => await TryAsync(PlayAsync), () => AreButtonsEnabled);
+            PauseCommand = new RelayCommand(async () => await TryAsync(PauseAsync), () => AreButtonsEnabled);
+            StopCommand = new RelayCommand(async () => await TryAsync(StopAsync), () => AreButtonsEnabled);
+            RefreshCommand = new RelayCommand(async () => await TryAsync(RefreshAsync), () => IsLoaded);
 
             if (!IsInDesignMode)
             {
@@ -42,25 +42,25 @@ namespace GoogleCast.SampleApp
         private IDeviceLocator DeviceLocator { get; }
         private ISender Sender { get; }
 
-        private IEnumerable<IReceiver> _receivers;
+        private IEnumerable<IReceiver>? _receivers;
         /// <summary>
         /// Gets the available receivers
         /// </summary>
-        public IEnumerable<IReceiver> Receivers
+        public IEnumerable<IReceiver>? Receivers
         {
-            get { return _receivers; }
-            private set { Set(nameof(Receivers), ref _receivers, value); }
+            get => _receivers;
+            private set => Set(nameof(Receivers), ref _receivers, value);
         }
 
         private bool IsInitialized { get; set; }
 
-        private IReceiver _selectedReceiver;
+        private IReceiver? _selectedReceiver;
         /// <summary>
         /// Gets or sets the selected receiver
         /// </summary>
-        public IReceiver SelectedReceiver
+        public IReceiver? SelectedReceiver
         {
-            get { return _selectedReceiver; }
+            get => _selectedReceiver;
             set
             {
                 if (_selectedReceiver != null && !_selectedReceiver.Equals(value) ||
@@ -80,7 +80,7 @@ namespace GoogleCast.SampleApp
         /// </summary>
         public bool IsLoaded
         {
-            get { return _isLoaded; }
+            get => _isLoaded;
             private set
             {
                 if (_isLoaded != value)
@@ -96,19 +96,16 @@ namespace GoogleCast.SampleApp
         /// <summary>
         /// Gets a value indicating whether the Play, Pause and Stop buttons must be enabled or not
         /// </summary>
-        public bool AreButtonsEnabled
-        {
-            get { return IsLoaded && SelectedReceiver != null && !String.IsNullOrWhiteSpace(Link); }
-        }
+        public bool AreButtonsEnabled => IsLoaded && SelectedReceiver != null && !string.IsNullOrWhiteSpace(Link);
 
-        private string _playerState;
+        private string? _playerState;
         /// <summary>
         /// Gets the player state
         /// </summary>
-        public string PlayerState
+        public string? PlayerState
         {
-            get { return _playerState; }
-            private set { Set(nameof(PlayerState), ref _playerState, value); }
+            get => _playerState;
+            private set => Set(nameof(PlayerState), ref _playerState, value);
         }
 
         private string _link = "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/DesigningForGoogleCast.mp4";
@@ -117,7 +114,7 @@ namespace GoogleCast.SampleApp
         /// </summary>
         public string Link
         {
-            get { return _link; }
+            get => _link;
             set
             {
                 if (_link != value)
@@ -136,8 +133,8 @@ namespace GoogleCast.SampleApp
         /// </summary>
         public string Subtitle
         {
-            get { return _subtitle; }
-            set { Set(nameof(Subtitle), ref _subtitle, value); }
+            get => _subtitle;
+            set => Set(nameof(Subtitle), ref _subtitle, value);
         }
 
         private bool _isMuted;
@@ -146,7 +143,7 @@ namespace GoogleCast.SampleApp
         /// </summary>
         public bool IsMuted
         {
-            get { return _isMuted; }
+            get => _isMuted;
             set
             {
                 if (_isMuted != value)
@@ -164,7 +161,7 @@ namespace GoogleCast.SampleApp
         /// </summary>
         public float Volume
         {
-            get { return _volume; }
+            get => _volume;
             set
             {
                 if (_volume != value)
@@ -214,7 +211,7 @@ namespace GoogleCast.SampleApp
             StopCommand.RaiseCanExecuteChanged();
         }
 
-        private async Task Try(Func<Task> action)
+        private async Task TryAsync(Func<Task> action)
         {
             try
             {
@@ -227,7 +224,7 @@ namespace GoogleCast.SampleApp
             }
         }
 
-        private async Task InvokeAsync<TChannel>(Func<TChannel, Task> action) where TChannel : IChannel
+        private async Task InvokeAsync<TChannel>(Func<TChannel, Task>? action) where TChannel : IChannel
         {
             if (action != null)
             {
@@ -235,7 +232,8 @@ namespace GoogleCast.SampleApp
             }
         }
 
-        private async Task SendChannelCommandAsync<TChannel>(bool condition, Func<TChannel, Task> action, Func<TChannel, Task> otherwise) where TChannel : IChannel
+        private async Task SendChannelCommandAsync<TChannel>(bool condition, Func<TChannel, Task>? action, Func<TChannel, Task> otherwise)
+            where TChannel : IChannel
         {
             await InvokeAsync(condition ? action : otherwise);
         }
@@ -332,7 +330,7 @@ namespace GoogleCast.SampleApp
         {
             var status = ((IMediaChannel)sender).Status?.FirstOrDefault();
             var playerState = status?.PlayerState;
-            if (playerState == "IDLE" && !String.IsNullOrEmpty(status.IdleReason))
+            if (playerState == "IDLE" && !string.IsNullOrEmpty(status!.IdleReason))
             {
                 playerState = status.IdleReason;
             }

@@ -27,14 +27,14 @@ namespace GoogleCast
         /// </summary>
         /// <param name="color">color string to convert</param>
         /// <returns>the nullable color object</returns>
-        public static Color? FromNullableHexString(string color)
+        public static Color? FromNullableHexString(string? color)
         {
             if (string.IsNullOrEmpty(color))
             {
                 return null;
             }
 
-            return FromHexString(color);
+            return FromHexString(color!);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace GoogleCast
         /// </summary>
         /// <param name="color">nullable color to convert</param>
         /// <returns>the hexadecimal string</returns>
-        public static string ToHexString(this Color? color)
+        public static string? ToHexString(this Color? color)
         {
             return color == null ? null : ToHexString((Color)color);
         }

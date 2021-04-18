@@ -23,23 +23,23 @@ namespace GoogleCast.Models.Media
         /// </summary>
         [DataMember(Name = "metadataType")]
         public MetadataType MetadataType { get; protected set; }
-        
+
         /// <summary>
         /// Gets or sets the descriptive title of the content
         /// </summary>
         [DataMember(Name = "title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Gets or sets the descriptive subtitle of the content
         /// </summary>
         [DataMember(Name = "subtitle")]
-        public string Subtitle { get; set; }
+        public string? Subtitle { get; set; }
 
         /// <summary>
         /// Gets or sets an array of URL(s) to an image associated with the content
         /// </summary>
         [DataMember(Name = "images")]
-        public Image[] Images { get; set; }
+        public Image[]? Images { get; set; }
     }
 }
