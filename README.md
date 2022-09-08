@@ -21,5 +21,27 @@ var mediaStatus = await mediaChannel.LoadAsync(
     new MediaInformation() { ContentId = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" });
 ```
 
+For Website casting purpose, with a static address
+
+```cs
+// Connect to the Chromecast
+await sender.ConnectAsync(
+                        new Receiver
+                        {
+                            IPEndPoint = new System.Net.IPEndPoint(
+                                IPAddress.Parse("10.0.0.2"),
+                                8009
+                            )
+                        });
+
+// Launch the default media receiver application
+var castChannel = sender.GetChannel<ICastChannel>();
+await sender.LaunchAsync(castChannel);
+
+// Load an example website
+await castChannel.LoadUrl(new CastInformation { Url = "https://www.example.com" });
+
+```
+
 ## Download
 [![NuGet](https://img.shields.io/nuget/v/GoogleCast.svg)](https://www.nuget.org/packages/GoogleCast)
