@@ -23,7 +23,10 @@ namespace GoogleCast.Channels
         /// <param name="ns">namespace</param>
         protected Channel(string ns)
         {
-            Namespace = $"{BASE_NAMESPACE}.{ns}";
+            if(!ns.StartsWith("urn:"))
+                Namespace = $"{BASE_NAMESPACE}.{ns}";
+            else
+                Namespace = ns; 
         }
 
         /// <inheritdoc/>

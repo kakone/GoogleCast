@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using GoogleCast.Channels;
 using GoogleCast.Models.Media;
@@ -31,6 +32,8 @@ namespace GoogleCast.SampleApp
             PauseCommand = new RelayCommand(async () => await TryAsync(PauseAsync), () => AreButtonsEnabled);
             StopCommand = new RelayCommand(async () => await TryAsync(StopAsync), () => AreButtonsEnabled);
             RefreshCommand = new RelayCommand(async () => await TryAsync(RefreshAsync), () => IsLoaded);
+            ConnectCommand = new RelayCommand(async () => await TryAsync(ConnectAsync), () => IsLoaded);
+            CastCommand = new RelayCommand(async () => await TryAsync(CastAsync), () => IsCastButtonEnabled);
         }
 
         private IDeviceLocator DeviceLocator { get; }
@@ -68,6 +71,28 @@ namespace GoogleCast.SampleApp
             }
         }
 
+        private string? _editedReceiver;
+        /// <summary>
+        /// Gets or sets the selected receiver
+        /// </summary>
+        public string? EditedReceiver
+        {
+            get => _editedReceiver;
+            set
+            {
+                if (_editedReceiver != null && !_editedReceiver.Equals(value) ||
+                    _editedReceiver == null && value != null)
+                {
+                    _editedReceiver = value;
+                    IsInitialized = false;
+                    OnPropertyChanged(nameof(EditedReceiver));
+                    NotifyButtonsCommandsCanExecuteChanged();
+                }
+            }
+        }
+
+        
+
         private bool _isLoaded;
         /// <summary>
         /// Gets a value indicating whether the list of the GoogleCast devices is loaded or not 
@@ -82,6 +107,8 @@ namespace GoogleCast.SampleApp
                     _isLoaded = value;
                     OnPropertyChanged(nameof(IsLoaded));
                     RefreshCommand.NotifyCanExecuteChanged();
+                    ConnectCommand.NotifyCanExecuteChanged();
+                    CastCommand.NotifyCanExecuteChanged();
                     NotifyButtonsCommandsCanExecuteChanged();
                 }
             }
@@ -90,7 +117,22 @@ namespace GoogleCast.SampleApp
         /// <summary>
         /// Gets a value indicating whether the Play, Pause and Stop buttons must be enabled or not
         /// </summary>
-        public bool AreButtonsEnabled => IsLoaded && SelectedReceiver != null && !string.IsNullOrWhiteSpace(Link);
+        public bool AreButtonsEnabled => IsLoaded &&
+            (
+                (SelectedReceiver != null && !string.IsNullOrWhiteSpace(Link)) 
+                || 
+                (EditedReceiver != null && !string.IsNullOrWhiteSpace(Link))
+            );
+
+        /// <summary>
+        /// Gets a value indicating whether the Cast buttons must be enabled or not
+        /// </summary>
+        public bool IsCastButtonEnabled => IsLoaded &&
+            (
+                (SelectedReceiver != null && !string.IsNullOrWhiteSpace(CastUrl))
+                ||
+                (EditedReceiver != null && !string.IsNullOrWhiteSpace(CastUrl))
+            );
 
         private string? _playerState;
         /// <summary>
@@ -116,6 +158,25 @@ namespace GoogleCast.SampleApp
                     _link = value;
                     IsInitialized = false;
                     OnPropertyChanged(nameof(Link));
+                    NotifyButtonsCommandsCanExecuteChanged();
+                }
+            }
+        }
+
+        private string _castUrl = "https://example.com";
+        /// <summary>
+        /// Gets or sets the url to cast
+        /// </summary>
+        public string CastUrl
+        {
+            get => _castUrl;
+            set
+            {
+                if (_castUrl != value)
+                {
+                    _link = value;
+                    IsInitialized = false;
+                    OnPropertyChanged(nameof(CastUrl));
                     NotifyButtonsCommandsCanExecuteChanged();
                 }
             }
@@ -196,6 +257,14 @@ namespace GoogleCast.SampleApp
         /// Gets the refresh command
         /// </summary>
         public RelayCommand RefreshCommand { get; }
+        /// <summary>
+        /// Gets the connect command
+        /// </summary>
+        public RelayCommand ConnectCommand { get; }
+        /// <summary>
+        /// Gets the connect command
+        /// </summary>
+        public RelayCommand CastCommand { get; }
 
         private void NotifyButtonsCommandsCanExecuteChanged()
         {
@@ -203,6 +272,7 @@ namespace GoogleCast.SampleApp
             PlayCommand.NotifyCanExecuteChanged();
             PauseCommand.NotifyCanExecuteChanged();
             StopCommand.NotifyCanExecuteChanged();
+            CastCommand.NotifyCanExecuteChanged();
         }
 
         private async Task TryAsync(Func<Task> action)
@@ -240,7 +310,37 @@ namespace GoogleCast.SampleApp
                 await Sender.ConnectAsync(selectedReceiver);
                 return true;
             }
+            else
+            {
+                if(!string.IsNullOrEmpty(EditedReceiver))
+                {
+                    await Sender.ConnectAsync(
+                        new Receiver
+                        {
+                            IPEndPoint = new System.Net.IPEndPoint(
+                                IPAddress.Parse(EditedReceiver),
+                                8009
+                            )
+                        });
+                    return true;
+                }
+            }
             return false;
+        }
+
+        private async Task<bool> CastAsync()
+        {
+            await SendChannelCommandAsync<ICastChannel>(true, 
+                async channel =>
+                {
+                    var sender = Sender;
+                    var castChannel = sender.GetChannel<ICastChannel>();
+                    await sender.LaunchAsync(castChannel);
+                    await channel.LoadUrl(new Models.Cast.CastInformation { Url = CastUrl });
+                }, 
+                c=> Task.CompletedTask);
+
+            return true;
         }
 
         private async Task PlayAsync()
