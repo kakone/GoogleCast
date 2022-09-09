@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using GoogleCast.Channels;
 using GoogleCast.Messages;
 using GoogleCast.Models.Receiver;
@@ -118,22 +120,41 @@ namespace GoogleCast
         }
 
         /// <inheritdoc/>
-        public async Task ConnectAsync(IReceiver receiver)
+        public async Task<bool> ConnectAsync(IReceiver receiver)
+        {
+            return await ConnectAsync(receiver, 10000);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> ConnectAsync(IPAddress address, int port, int timeout = 10000)
+        {
+            var receiver = new Receiver
+            {
+                IPEndPoint = new System.Net.IPEndPoint(address, port)
+            };
+            return await ConnectAsync(receiver, timeout);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> ConnectAsync(IReceiver receiver, int timeout = 10000)
         {
             Dispose();
 
             Receiver = receiver;
-            var tcpClient = new TcpClient();
-            TcpClient = tcpClient;
-            var ipEndPoint = receiver.IPEndPoint;
-            var host = ipEndPoint.Address.ToString();
-            await tcpClient.ConnectAsync(host, ipEndPoint.Port);
-            var secureStream = new SslStream(tcpClient.GetStream(), true, (sender, certificate, chain, sslPolicyErrors) => true);
-            await secureStream.AuthenticateAsClientAsync(host);
+            TcpClient = new TcpClient();
+            var result = TcpClient.BeginConnect(receiver.IPEndPoint.Address.ToString(), receiver.IPEndPoint.Port, null, null);
+            var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeout));
+            if (!success)
+            {
+                return false;
+            }
+            var secureStream = new SslStream(TcpClient.GetStream(), true, (sender, certificate, chain, sslPolicyErrors) => true);
+            await secureStream.AuthenticateAsClientAsync(receiver.IPEndPoint.Address.ToString());
             NetworkStream = secureStream;
 
             Receive();
             await GetChannel<IConnectionChannel>().ConnectAsync();
+            return true;
         }
 
         private void Receive()

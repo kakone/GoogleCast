@@ -1,5 +1,7 @@
 ﻿using GoogleCast.Messages;
 using GoogleCast.Messages.Heartbeat;
+using GoogleCast.Models.HeartBeat;
+using System;
 using System.Threading.Tasks;
 
 namespace GoogleCast.Channels
@@ -16,12 +18,15 @@ namespace GoogleCast.Channels
         {
         }
 
+        public event EventHandler<PingEvent>? PingReceived;
+
         /// <inheritdoc/>
         public override async Task OnMessageReceivedAsync(IMessage message)
         {
             switch (message)
             {
                 case PingMessage:
+                    PingReceived?.Invoke(this, new PingEvent { Date = DateTime.Now });
                     await SendAsync(new PongMessage());
                     break;
             }
