@@ -120,9 +120,10 @@ namespace GoogleCast
         }
 
         /// <inheritdoc/>
-        public async Task<bool> ConnectAsync(IReceiver receiver)
+        public async Task ConnectAsync(IReceiver receiver)
         {
-            return await ConnectAsync(receiver, 10000);
+            if(!await ConnectAsync(receiver, 10000))
+                throw new TimeoutException("Connect Timeout");
         }
 
         /// <inheritdoc/>
