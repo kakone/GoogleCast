@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using GoogleCast.Channels;
 using GoogleCast.Messages;
 using GoogleCast.Models.Receiver;
@@ -120,20 +122,40 @@ namespace GoogleCast
         /// <inheritdoc/>
         public async Task ConnectAsync(IReceiver receiver)
         {
+            if(!await ConnectAsync(receiver, 10000))
+                throw new TimeoutException("Connect Timeout");
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> ConnectAsync(IPAddress address, int port, int timeout = 10000)
+        {
+            var receiver = new Receiver
+            {
+                IPEndPoint = new System.Net.IPEndPoint(address, port)
+            };
+            return await ConnectAsync(receiver, timeout);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> ConnectAsync(IReceiver receiver, int timeout = 10000)
+        {
             Dispose();
 
             Receiver = receiver;
-            var tcpClient = new TcpClient();
-            TcpClient = tcpClient;
-            var ipEndPoint = receiver.IPEndPoint;
-            var host = ipEndPoint.Address.ToString();
-            await tcpClient.ConnectAsync(host, ipEndPoint.Port);
-            var secureStream = new SslStream(tcpClient.GetStream(), true, (sender, certificate, chain, sslPolicyErrors) => true);
-            await secureStream.AuthenticateAsClientAsync(host);
+            TcpClient = new TcpClient();
+            var result = TcpClient.BeginConnect(receiver.IPEndPoint.Address.ToString(), receiver.IPEndPoint.Port, null, null);
+            var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeout));
+            if (!success)
+            {
+                return false;
+            }
+            var secureStream = new SslStream(TcpClient.GetStream(), true, (sender, certificate, chain, sslPolicyErrors) => true);
+            await secureStream.AuthenticateAsClientAsync(receiver.IPEndPoint.Address.ToString());
             NetworkStream = secureStream;
 
             Receive();
             await GetChannel<IConnectionChannel>().ConnectAsync();
+            return true;
         }
 
         private void Receive()
@@ -147,39 +169,44 @@ namespace GoogleCast
                 {
                     var channels = Channels;
                     var messageTypes = ServiceProvider.GetRequiredService<IMessageTypes>();
-                    while (true)
+                    while (!cancellationToken.IsCancellationRequested)
                     {
                         var buffer = await ReadAsync(4, cancellationToken);
-                        if (BitConverter.IsLittleEndian)
+                        if (!cancellationToken.IsCancellationRequested)
                         {
-                            Array.Reverse(buffer);
-                        }
-                        var length = BitConverter.ToInt32(buffer, 0);
-                        CastMessage castMessage;
-                        using (var ms = new MemoryStream())
-                        {
-                            await ms.WriteAsync(await ReadAsync(length, cancellationToken), 0, length, cancellationToken);
-                            ms.Position = 0;
-                            castMessage = Serializer.Deserialize<CastMessage>(ms);
-                        }
-                        var payload = (castMessage.PayloadType == PayloadType.Binary ?
-                            Encoding.UTF8.GetString(castMessage.PayloadBinary) : castMessage.PayloadUtf8)!;
-                        Debug.WriteLine($"RECEIVED: {castMessage.Namespace} : {payload}");
-                        var channel = channels.FirstOrDefault(c => c.Namespace == castMessage.Namespace);
-                        if (channel != null)
-                        {
-                            var message = JsonSerializer.Deserialize<MessageWithId>(payload)!;
-                            if (messageTypes.TryGetValue(message.Type, out var type))
+                            if (BitConverter.IsLittleEndian)
                             {
-                                try
+                                Array.Reverse(buffer);
+                            }
+                            var length = BitConverter.ToInt32(buffer, 0);
+                            CastMessage castMessage;
+                            using (var ms = new MemoryStream())
+                            {
+                                await ms.WriteAsync(await ReadAsync(length, cancellationToken), 0, length, cancellationToken);
+                                ms.Position = 0;
+                                castMessage = Serializer.Deserialize<CastMessage>(ms);
+                            }
+                            var payload = (castMessage.PayloadType == PayloadType.Binary ?
+                                Encoding.UTF8.GetString(castMessage.PayloadBinary) : castMessage.PayloadUtf8)!;
+
+                            Debug.WriteLine($"RECEIVED { Encoding.Default.GetString(JsonSerializer.Serialize( castMessage)) }");
+                            
+                            var channel = channels.FirstOrDefault(c => c.Namespace == castMessage.Namespace);
+                            if (channel != null)
+                            {
+                                var message = JsonSerializer.Deserialize<MessageWithId>(payload)!;
+                                if (messageTypes.TryGetValue(message.Type, out var type))
                                 {
-                                    var response = (IMessage)JsonSerializer.Deserialize(type, payload)!;
-                                    await channel.OnMessageReceivedAsync(response);
-                                    TaskCompletionSourceInvoke(message, "SetResult", response);
-                                }
-                                catch (Exception ex)
-                                {
-                                    TaskCompletionSourceInvoke(message, "SetException", ex, new Type[] { typeof(Exception) });
+                                    try
+                                    {
+                                        var response = (IMessage)JsonSerializer.Deserialize(type, payload)!;
+                                        await channel.OnMessageReceivedAsync(response);
+                                        TaskCompletionSourceInvoke(message, "SetResult", response);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        TaskCompletionSourceInvoke(message, "SetException", ex, new Type[] { typeof(Exception) });
+                                    }
                                 }
                             }
                         }
@@ -204,18 +231,26 @@ namespace GoogleCast
 
         private async Task<byte[]> ReadAsync(int bufferLength, CancellationToken cancellationToken)
         {
-            var buffer = new byte[bufferLength];
-            int nb, length = 0;
-            while (length < bufferLength)
+            try
             {
-                nb = await NetworkStream!.ReadAsync(buffer, length, bufferLength - length, cancellationToken);
-                if (nb == 0)
+                var buffer = new byte[bufferLength];
+                int nb, length = 0;
+                while (length < bufferLength)
                 {
-                    throw new InvalidOperationException();
+                    nb = await NetworkStream!.ReadAsync(buffer, length, bufferLength - length, cancellationToken);
+                    if (nb == 0)
+                    {
+                        throw new InvalidOperationException();
+                    }
+                    length += nb;
                 }
-                length += nb;
+                return buffer;
             }
-            return buffer;
+            catch(OperationCanceledException ex)
+            {
+                // Swallow Exception since Cancelation was requested by the Dispose()
+                return new byte[0];
+            }
         }
 
         private async Task EnsureConnectionAsync()
@@ -244,7 +279,7 @@ namespace GoogleCast
             await SendSemaphoreSlim.WaitAsync();
             try
             {
-                Debug.WriteLine($"SENT    : {castMessage.DestinationId}: {castMessage.PayloadUtf8}");
+                Debug.WriteLine($"SENT: { Encoding.Default.GetString(JsonSerializer.Serialize( castMessage)) }");
 
                 byte[] message;
                 using (var ms = new MemoryStream())

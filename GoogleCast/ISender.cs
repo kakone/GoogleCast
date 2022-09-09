@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using GoogleCast.Channels;
 using GoogleCast.Messages;
@@ -30,6 +31,24 @@ namespace GoogleCast
         /// <param name="receiver">receiver</param>
         Task ConnectAsync(IReceiver receiver);
 
+
+        /// <summary>
+        /// Connects to a receiver
+        /// </summary>
+        /// <param name="receiver">receiver</param>
+        /// <param name="timeout">timeout</param>
+        /// <returns>Status of connection</returns>
+        Task<bool> ConnectAsync(IReceiver receiver, int timeout = 5000);
+
+        /// <summary>
+        /// Connects to a receiver
+        /// </summary>
+        /// <param name="address">IP Address of the receiver</param>
+        /// <param name="port">port</param>
+        /// <param name="timeout">timeout</param>
+        /// <returns></returns>
+        Task<bool> ConnectAsync(IPAddress address, int port, int timeout);
+        
         /// <summary>
         /// Disconnects
         /// </summary>

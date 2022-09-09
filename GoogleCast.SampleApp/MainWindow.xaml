@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="GoogleCast" Height="200" Width="784"
+        Title="GoogleCast" Height="229" Width="784"
         ResizeMode="CanResizeWithGrip"
         Loaded="WindowLoadedAsync"
-        DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}">
+        DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -18,11 +19,14 @@
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="589*" />
+                <ColumnDefinition Width="123*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ComboBox ItemsSource="{Binding Receivers}" DisplayMemberPath="FriendlyName" SelectedValue="{Binding SelectedReceiver, Mode=TwoWay}" IsEnabled="{Binding IsLoaded}" Margin="4" />
-            <Button Grid.Column="1" Margin="4" Padding="4" Width="64" Command="{Binding RefreshCommand}">Refresh</Button>
+            <ComboBox ItemsSource="{Binding Receivers}" DisplayMemberPath="FriendlyName" Text="{Binding EditedReceiver, Mode=TwoWay}" SelectedValue="{Binding SelectedReceiver, Mode=TwoWay}" IsEnabled="{Binding IsLoaded}" Margin="4,4,4,4" Grid.ColumnSpan="2" IsEditable="True" />
+            <Button Grid.Column="2" Margin="4,4,4,4" Padding="4" Width="64" Command="{Binding RefreshCommand}">Refresh</Button>
+            <Button Grid.Column="3" Margin="4,4,4,4" Padding="4" Width="64" Command="{Binding ConnectCommand}">Connect</Button>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -38,13 +42,21 @@
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Margin="4" Text="{Binding CastUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
+            <Button Grid.Column="3" Margin="4" Padding="4" Width="64" Command="{Binding CastCommand}">Cast</Button>
+        </Grid>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Label VerticalAlignment="Center">Subtitle file</Label>
             <TextBox Grid.Column="1" Margin="4" Text="{Binding Subtitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
         </Grid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -56,6 +68,6 @@
             <CheckBox Grid.Column="2" Margin="4" IsChecked="{Binding IsMuted, Mode=TwoWay}" VerticalAlignment="Center"
                       IsEnabled="{Binding AreButtonsEnabled}">Mute</CheckBox>
         </Grid>
-        <TextBlock Grid.Row="4" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PlayerState}" />
+        <TextBlock Grid.Row="5" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PlayerState}" />
     </Grid>
 </Window>
