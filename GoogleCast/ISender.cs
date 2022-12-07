@@ -30,6 +30,19 @@ namespace GoogleCast
         /// <param name="receiver">receiver</param>
         Task ConnectAsync(IReceiver receiver);
 
+
+        /// <summary>
+        ///  Connects to a receiver using IP Address
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        Task ConnectAsync(string ipAddress, int port);
+
+        /// <summary>
+        /// 
+
+
         /// <summary>
         /// Disconnects
         /// </summary>

@@ -237,7 +237,8 @@ namespace GoogleCast.SampleApp
             var selectedReceiver = SelectedReceiver;
             if (selectedReceiver != null)
             {
-                await Sender.ConnectAsync(selectedReceiver);
+                //await Sender.ConnectAsync(selectedReceiver);
+                await Sender.ConnectAsync("192.168.3.142", 8009);
                 return true;
             }
             return false;

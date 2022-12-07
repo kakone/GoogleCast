@@ -136,6 +136,25 @@ namespace GoogleCast
             await GetChannel<IConnectionChannel>().ConnectAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task ConnectAsync(string ipAddress, int port)
+        {
+            Dispose();
+
+
+            var tcpClient = new TcpClient();
+            TcpClient = tcpClient;
+
+            var host = ipAddress;
+            await tcpClient.ConnectAsync(host, port);
+            var secureStream = new SslStream(tcpClient.GetStream(), true, (sender, certificate, chain, sslPolicyErrors) => true);
+            await secureStream.AuthenticateAsClientAsync(host);
+            NetworkStream = secureStream;
+
+            Receive();
+            await GetChannel<IConnectionChannel>().ConnectAsync();
+        }
+
         private void Receive()
         {
             var cancellationTokenSource = new CancellationTokenSource();
