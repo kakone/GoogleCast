@@ -7,14 +7,14 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
-    <Authors>Stéphane Mitermite</Authors>
-    <Company>Stéphane Mitermite</Company>
+    <Authors>Saqib Khan</Authors>
+    <Company>SmartAzan</Company>
     <Description>Implementation of the Google Cast protocol (.NET Standard 2.0 library).</Description>
     <Copyright>Copyright © 2021 Stéphane Mitermite</Copyright>
     <PackageProjectUrl>https://github.com/kakone/GoogleCast</PackageProjectUrl>
     <PackageTags>google cast googlecast chromecast</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>   
-    <Version>1.7.0</Version>
+    <Version>1.8</Version>
     <RepositoryUrl>https://github.com/kakone/GoogleCast</RepositoryUrl>
     <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
     <PackageIcon>GoogleCast.png</PackageIcon>
@@ -37,6 +37,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="NuGet.CommandLine" Version="6.3.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="protobuf-net" Version="3.0.101" />
     <PackageReference Include="Zeroconf" Version="3.4.2" />
   </ItemGroup>

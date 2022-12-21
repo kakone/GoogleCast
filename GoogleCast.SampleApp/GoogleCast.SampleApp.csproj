@@ -28,6 +28,6 @@
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GoogleCast\GoogleCast.csproj" />
+    <ProjectReference Include="..\GoogleCast\GoogleCastIP.csproj" />
   </ItemGroup>
 </Project>
