@@ -1,12 +1,11 @@
 ﻿using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
-namespace GoogleCast.SampleApp
+namespace GoogleCast.SampleApp;
+
+class ViewModelLocator
 {
-    class ViewModelLocator
-    {
-        /// <summary>
-        /// Gets the main view model
-        /// </summary>
-        public static MainViewModel Main => Ioc.Default.GetRequiredService<MainViewModel>();
-    }
+    /// <summary>
+    /// Gets the main view model
+    /// </summary>
+    public static MainViewModel Main => Ioc.Default.GetRequiredService<MainViewModel>();
 }

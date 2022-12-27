@@ -1,25 +1,24 @@
 ﻿using System.Net;
 
-namespace GoogleCast
+namespace GoogleCast;
+
+/// <summary>
+/// Interface for a receiver
+/// </summary>
+public interface IReceiver
 {
     /// <summary>
-    /// Interface for a receiver
+    /// Gets the receiver identifier
     /// </summary>
-    public interface IReceiver
-    {
-        /// <summary>
-        /// Gets the receiver identifier
-        /// </summary>
-        string Id { get; }
+    string Id { get; }
 
-        /// <summary>
-        /// Gets the friendly name
-        /// </summary>
-        string FriendlyName { get; }
+    /// <summary>
+    /// Gets the friendly name
+    /// </summary>
+    string FriendlyName { get; }
 
-        /// <summary>
-        /// Gets the network endpoint
-        /// </summary>
-        IPEndPoint IPEndPoint { get; }
-    }
+    /// <summary>
+    /// Gets the network endpoint
+    /// </summary>
+    IPEndPoint IPEndPoint { get; }
 }

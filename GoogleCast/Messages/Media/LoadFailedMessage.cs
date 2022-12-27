@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace GoogleCast.Messages.Media
+namespace GoogleCast.Messages.Media;
+
+/// <summary>
+/// Load failed message
+/// </summary>
+[DataContract]
+[ReceptionMessage]
+class LoadFailedMessage : MessageWithId
 {
-    /// <summary>
-    /// Load failed message
-    /// </summary>
-    [DataContract]
-    [ReceptionMessage]
-    class LoadFailedMessage : MessageWithId
+    [OnDeserializing]
+    private void OnDeserializing(StreamingContext context)
     {
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            throw new Exception("Load failed");
-        }
+        throw new Exception("Load failed");
     }
 }

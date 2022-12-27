@@ -1,27 +1,26 @@
 ﻿using System.Threading.Tasks;
 using GoogleCast.Messages;
 
-namespace GoogleCast.Channels
+namespace GoogleCast.Channels;
+
+/// <summary>
+/// Interface for a channel
+/// </summary>
+public interface IChannel
 {
     /// <summary>
-    /// Interface for a channel
+    /// Gets or sets the sender
     /// </summary>
-    public interface IChannel
-    {
-        /// <summary>
-        /// Gets or sets the sender
-        /// </summary>
-        ISender? Sender { get; set; }
+    ISender? Sender { get; set; }
 
-        /// <summary>
-        /// Gets the full namespace
-        /// </summary>
-        string Namespace { get; }
+    /// <summary>
+    /// Gets the full namespace
+    /// </summary>
+    string Namespace { get; }
 
-        /// <summary>
-        /// Called when a message for this channel is received
-        /// </summary>
-        /// <param name="message">message to process</param>
-        Task OnMessageReceivedAsync(IMessage message);
-    }
+    /// <summary>
+    /// Called when a message for this channel is received
+    /// </summary>
+    /// <param name="message">message to process</param>
+    Task OnMessageReceivedAsync(IMessage message);
 }

@@ -2,29 +2,28 @@
 using GoogleCast.Messages.Heartbeat;
 using System.Threading.Tasks;
 
-namespace GoogleCast.Channels
+namespace GoogleCast.Channels;
+
+/// <summary>
+/// Heartbeat channel
+/// </summary>
+class HeartbeatChannel : Channel, IHeartbeatChannel
 {
     /// <summary>
-    /// Heartbeat channel
+    /// Initializes a new instance of <see cref="HeartbeatChannel"/> class
     /// </summary>
-    class HeartbeatChannel : Channel, IHeartbeatChannel
+    public HeartbeatChannel() : base("tp.heartbeat")
     {
-        /// <summary>
-        /// Initializes a new instance of <see cref="HeartbeatChannel"/> class
-        /// </summary>
-        public HeartbeatChannel() : base("tp.heartbeat")
-        {
-        }
+    }
 
-        /// <inheritdoc/>
-        public override async Task OnMessageReceivedAsync(IMessage message)
+    /// <inheritdoc/>
+    public override async Task OnMessageReceivedAsync(IMessage message)
+    {
+        switch (message)
         {
-            switch (message)
-            {
-                case PingMessage:
-                    await SendAsync(new PongMessage());
-                    break;
-            }
+            case PingMessage:
+                await SendAsync(new PongMessage());
+                break;
         }
     }
 }

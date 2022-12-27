@@ -1,25 +1,19 @@
 ﻿using System.Runtime.Serialization;
 
-namespace GoogleCast.Models.Media
-{
-    /// <summary>
-    /// Movie metadata
-    /// </summary>
-    [DataContract]
-    public class MovieMetadata : GenericMediaMetadata
-    {
-        /// <summary>
-        /// Initializes a new instance of <see cref="MovieMetadata"/> class
-        /// </summary>
-        public MovieMetadata()
-        {
-            MetadataType = MetadataType.Movie;
-        }
+namespace GoogleCast.Models.Media;
 
-        /// <summary>
-        /// Gets or sets the studio
-        /// </summary>
-        [DataMember(Name = "studio")]
-        public string? Studio { get; set; }
-    }
+/// <summary>
+/// Movie media description
+/// </summary>
+[DataContract]
+public class MovieMetadata : GenericMediaMetadata
+{
+    /// <inheritdoc/>
+    public override MetadataType MetadataType => MetadataType.Movie;
+
+    /// <summary>
+    /// Gets or sets the studio
+    /// </summary>
+    [DataMember(Name = "studio", EmitDefaultValue = false)]
+    public string? Studio { get; set; }
 }

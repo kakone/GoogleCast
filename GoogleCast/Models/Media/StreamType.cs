@@ -1,23 +1,22 @@
-﻿namespace GoogleCast.Models.Media
+﻿namespace GoogleCast.Models.Media;
+
+/// <summary>
+/// Stream type
+/// </summary>
+public enum StreamType
 {
     /// <summary>
-    /// Stream type
+    /// None
     /// </summary>
-    public enum StreamType
-    {
-        /// <summary>
-        /// None
-        /// </summary>
-        None,
+    None,
 
-        /// <summary>
-        /// Live
-        /// </summary>
-        Live,
+    /// <summary>
+    /// Live
+    /// </summary>
+    Live,
 
-        /// <summary>
-        /// Buffered
-        /// </summary>
-        Buffered
-    }
+    /// <summary>
+    /// Buffered
+    /// </summary>
+    Buffered
 }

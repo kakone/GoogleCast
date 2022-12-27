@@ -1,23 +1,22 @@
-﻿namespace GoogleCast.Models.Media
+﻿namespace GoogleCast.Models.Media;
+
+/// <summary>
+/// Track type
+/// </summary>
+public enum TrackType
 {
     /// <summary>
-    /// Track type
+    /// Text
     /// </summary>
-    public enum TrackType
-    {
-        /// <summary>
-        /// Text
-        /// </summary>
-        Text,
+    Text,
 
-        /// <summary>
-        /// Audio
-        /// </summary>
-        Audio,
+    /// <summary>
+    /// Audio
+    /// </summary>
+    Audio,
 
-        /// <summary>
-        /// Video
-        /// </summary>
-        Video
-    }
+    /// <summary>
+    /// Video
+    /// </summary>
+    Video
 }

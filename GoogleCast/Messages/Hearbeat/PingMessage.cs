@@ -1,13 +1,12 @@
 ﻿using System.Runtime.Serialization;
 
-namespace GoogleCast.Messages.Heartbeat
+namespace GoogleCast.Messages.Heartbeat;
+
+/// <summary>
+/// Ping message
+/// </summary>
+[DataContract]
+[ReceptionMessage]
+class PingMessage : Message
 {
-    /// <summary>
-    /// Ping message
-    /// </summary>
-    [DataContract]
-    [ReceptionMessage]
-    class PingMessage : Message
-    {
-    }
 }

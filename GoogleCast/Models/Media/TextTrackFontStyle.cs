@@ -1,28 +1,27 @@
-﻿namespace GoogleCast.Models.Media
+﻿namespace GoogleCast.Models.Media;
+
+/// <summary>
+/// Possible text track font styles
+/// </summary>
+public enum TextTrackFontStyle
 {
     /// <summary>
-    /// Possible text track font styles
+    /// Normal
     /// </summary>
-    public enum TextTrackFontStyle
-    {
-        /// <summary>
-        /// Normal
-        /// </summary>
-        Normal,
+    Normal,
 
-        /// <summary>
-        /// Bold
-        /// </summary>
-        Bold,
+    /// <summary>
+    /// Bold
+    /// </summary>
+    Bold,
 
-        /// <summary>
-        /// Bold italic
-        /// </summary>
-        BoldItalic,
+    /// <summary>
+    /// Bold italic
+    /// </summary>
+    BoldItalic,
 
-        /// <summary>
-        /// Italic
-        /// </summary>
-        Italic
-    }
+    /// <summary>
+    /// Italic
+    /// </summary>
+    Italic
 }

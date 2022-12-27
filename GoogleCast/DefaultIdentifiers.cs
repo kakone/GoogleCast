@@ -1,18 +1,17 @@
-﻿namespace GoogleCast
+﻿namespace GoogleCast;
+
+/// <summary>
+/// Default identifiers
+/// </summary>
+static class DefaultIdentifiers
 {
     /// <summary>
-    /// Default identifiers
+    /// Default sender identifier
     /// </summary>
-    static class DefaultIdentifiers
-    {
-        /// <summary>
-        /// Default sender identifier
-        /// </summary>
-        public const string SENDER_ID = "sender-0";
+    public const string SENDER_ID = "sender-0";
 
-        /// <summary>
-        /// Default destination identifier
-        /// </summary>
-        public const string DESTINATION_ID = "receiver-0";
-    }
+    /// <summary>
+    /// Default destination identifier
+    /// </summary>
+    public const string DESTINATION_ID = "receiver-0";
 }

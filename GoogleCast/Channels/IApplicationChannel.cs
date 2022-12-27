@@ -1,13 +1,12 @@
-﻿namespace GoogleCast.Channels
+﻿namespace GoogleCast.Channels;
+
+/// <summary>
+/// Interface for application channels
+/// </summary>
+public interface IApplicationChannel : IChannel
 {
     /// <summary>
-    /// Interface for application channels
+    /// Gets the application identifier
     /// </summary>
-    public interface IApplicationChannel : IChannel
-    {
-        /// <summary>
-        /// Gets the application identifier
-        /// </summary>
-        string ApplicationId { get; }
-    }
+    string ApplicationId { get; }
 }

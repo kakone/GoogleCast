@@ -1,17 +1,16 @@
 ﻿using System.Runtime.Serialization;
 
-namespace GoogleCast.Messages.Media
+namespace GoogleCast.Messages.Media;
+
+/// <summary>
+/// Media session message
+/// </summary>
+[DataContract]
+abstract class MediaSessionMessage : MessageWithId
 {
     /// <summary>
-    /// Media session message
+    /// Gets or sets the media session identifier
     /// </summary>
-    [DataContract]
-    abstract class MediaSessionMessage : MessageWithId
-    {
-        /// <summary>
-        /// Gets or sets the media session identifier
-        /// </summary>
-        [DataMember(Name = "mediaSessionId", EmitDefaultValue = false)]
-        public long? MediaSessionId { get; set; }
-    }
+    [DataMember(Name = "mediaSessionId", EmitDefaultValue = false)]
+    public long? MediaSessionId { get; set; }
 }

@@ -1,9 +1,8 @@
-﻿namespace GoogleCast.Channels
+﻿namespace GoogleCast.Channels;
+
+/// <summary>
+/// Interface for the heartbeat channel
+/// </summary>
+interface IHeartbeatChannel : IChannel
 {
-    /// <summary>
-    /// Interface for the heartbeat channel
-    /// </summary>
-    interface IHeartbeatChannel : IChannel
-    {
-    }
 }

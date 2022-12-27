@@ -1,46 +1,45 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace GoogleCast
+namespace GoogleCast;
+
+/// <summary>
+/// Extensions methods for Task class
+/// </summary>
+public static class TaskExtensions
 {
     /// <summary>
-    /// Extensions methods for Task class
+    /// Throws a TimeoutException if a task is not completed before a delay
     /// </summary>
-    public static class TaskExtensions
+    /// <typeparam name="T">return type</typeparam>
+    /// <param name="task">task</param>
+    /// <param name="delay">the delay in milliseconds</param>
+    /// <returns>T</returns>
+    public static async Task<T> TimeoutAfter<T>(this Task<T> task, int delay)
     {
-        /// <summary>
-        /// Throws a TimeoutException if a task is not completed before a delay
-        /// </summary>
-        /// <typeparam name="T">return type</typeparam>
-        /// <param name="task">task</param>
-        /// <param name="delay">the delay in milliseconds</param>
-        /// <returns>T</returns>
-        public static async Task<T> TimeoutAfter<T>(this Task<T> task, int delay)
+        await Task.WhenAny(task, Task.Delay(delay));
+        if (!task.IsCompleted)
         {
-            await Task.WhenAny(task, Task.Delay(delay));
-            if (!task.IsCompleted)
-            {
-                throw new TimeoutException();
-            }
-
-            return await task;
+            throw new TimeoutException();
         }
 
-        /// <summary>
-        /// Throws a TimeoutException if a task is not completed before a delay
-        /// </summary>
-        /// <param name="task">task</param>
-        /// <param name="delay">the delay in milliseconds</param>
-        /// <returns>T</returns>
-        public static async Task TimeoutAfter(this Task task, int delay)
-        {
-            await Task.WhenAny(task, Task.Delay(delay));
-            if (!task.IsCompleted)
-            {
-                throw new TimeoutException();
-            }
+        return await task;
+    }
 
-            await task;
+    /// <summary>
+    /// Throws a TimeoutException if a task is not completed before a delay
+    /// </summary>
+    /// <param name="task">task</param>
+    /// <param name="delay">the delay in milliseconds</param>
+    /// <returns>T</returns>
+    public static async Task TimeoutAfter(this Task task, int delay)
+    {
+        await Task.WhenAny(task, Task.Delay(delay));
+        if (!task.IsCompleted)
+        {
+            throw new TimeoutException();
         }
+
+        await task;
     }
 }

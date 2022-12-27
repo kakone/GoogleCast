@@ -1,13 +1,12 @@
-﻿namespace GoogleCast.Messages
+﻿namespace GoogleCast.Messages;
+
+/// <summary>
+/// Interface for a message
+/// </summary>
+public interface IMessage
 {
     /// <summary>
-    /// Interface for a message
+    /// Gets the message type
     /// </summary>
-    public interface IMessage
-    {
-        /// <summary>
-        /// Gets the message type
-        /// </summary>
-        string Type { get; }
-    }
+    string Type { get; }
 }

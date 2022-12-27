@@ -1,12 +1,11 @@
 ﻿using System.Runtime.Serialization;
 
-namespace GoogleCast.Messages.Media
+namespace GoogleCast.Messages.Media;
+
+/// <summary>
+/// Message to retrieve the media status
+/// </summary>
+[DataContract]
+class GetStatusMessage : MediaSessionMessage
 {
-    /// <summary>
-    /// Message to retrieve the media status
-    /// </summary>
-    [DataContract]
-    class GetStatusMessage : MediaSessionMessage
-    {
-    }
 }

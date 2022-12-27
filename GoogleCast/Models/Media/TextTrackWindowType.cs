@@ -1,23 +1,22 @@
-﻿namespace GoogleCast.Models.Media
+﻿namespace GoogleCast.Models.Media;
+
+/// <summary>
+/// Text track window types
+/// </summary>
+public enum TextTrackWindowType
 {
     /// <summary>
-    /// Text track window types
+    /// None
     /// </summary>
-    public enum TextTrackWindowType
-    {
-        /// <summary>
-        /// None
-        /// </summary>
-        None,
+    None,
 
-        /// <summary>
-        /// Normal
-        /// </summary>
-        Normal,
+    /// <summary>
+    /// Normal
+    /// </summary>
+    Normal,
 
-        /// <summary>
-        /// Rounded corners
-        /// </summary>
-        RoundedCorners
-    }
+    /// <summary>
+    /// Rounded corners
+    /// </summary>
+    RoundedCorners
 }

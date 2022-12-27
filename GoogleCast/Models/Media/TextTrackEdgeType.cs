@@ -1,33 +1,32 @@
-﻿namespace GoogleCast.Models.Media
+﻿namespace GoogleCast.Models.Media;
+
+/// <summary>
+/// Possible text track edge types
+/// </summary>
+public enum TextTrackEdgeType
 {
     /// <summary>
-    /// Possible text track edge types
+    /// None
     /// </summary>
-    public enum TextTrackEdgeType
-    {
-        /// <summary>
-        /// None
-        /// </summary>
-        None,
+    None,
 
-        /// <summary>
-        /// Outline
-        /// </summary>
-        Outline,
+    /// <summary>
+    /// Outline
+    /// </summary>
+    Outline,
 
-        /// <summary>
-        /// Drop shadow
-        /// </summary>
-        DropShadow,
+    /// <summary>
+    /// Drop shadow
+    /// </summary>
+    DropShadow,
 
-        /// <summary>
-        /// Raised
-        /// </summary>
-        Raised,
+    /// <summary>
+    /// Raised
+    /// </summary>
+    Raised,
 
-        /// <summary>
-        /// Depressed
-        /// </summary>
-        Depressed
-    }
+    /// <summary>
+    /// Depressed
+    /// </summary>
+    Depressed
 }

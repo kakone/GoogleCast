@@ -1,12 +1,11 @@
 ﻿using System.Runtime.Serialization;
 
-namespace GoogleCast.Messages.Receiver
+namespace GoogleCast.Messages.Receiver;
+
+/// <summary>
+/// Get status message
+/// </summary>
+[DataContract]
+class GetStatusMessage : MessageWithId
 {
-    /// <summary>
-    /// Get status message
-    /// </summary>
-    [DataContract]
-    class GetStatusMessage : MessageWithId
-    {
-    }
 }

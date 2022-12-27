@@ -1,29 +1,28 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 
-namespace GoogleCast.SampleApp
+namespace GoogleCast.SampleApp;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Initializes a new instance of <see cref="MainWindow"/> class
     /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        /// <summary>
-        /// Initializes a new instance of <see cref="MainWindow"/> class
-        /// </summary>
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private new MainViewModel DataContext => (MainViewModel)base.DataContext;
+    private new MainViewModel DataContext => (MainViewModel)base.DataContext;
 
-        private async void WindowLoadedAsync(object sender, RoutedEventArgs e)
+    private async void WindowLoadedAsync(object sender, RoutedEventArgs e)
+    {
+        if (!DesignerProperties.GetIsInDesignMode(this))
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                await DataContext.RefreshAsync();
-            }
+            await DataContext.RefreshAsync();
         }
     }
 }
