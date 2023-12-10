@@ -18,6 +18,11 @@ namespace GoogleCast
         public string FriendlyName { get; set; } = default!;
 
         /// <summary>
+        /// Gets or sets the Model name
+        /// </summary>
+        public string ModelName { get; set; } = default!;
+
+        /// <summary>
         /// Gets or sets the network endpoint
         /// </summary>
         public IPEndPoint IPEndPoint { get; set; } = default!;

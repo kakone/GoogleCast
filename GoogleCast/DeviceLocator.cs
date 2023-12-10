@@ -24,6 +24,7 @@ namespace GoogleCast
             {
                 Id = properties["id"],
                 FriendlyName = properties["fn"],
+                ModelName = properties["md"],
                 IPEndPoint = new IPEndPoint(IPAddress.Parse(host.IPAddress), service.Port)
             };
         }
