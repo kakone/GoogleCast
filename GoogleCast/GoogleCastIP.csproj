@@ -14,7 +14,7 @@
     <PackageProjectUrl>https://github.com/kakone/GoogleCast</PackageProjectUrl>
     <PackageTags>google cast googlecast chromecast</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>   
-    <Version>1.8</Version>
+    <Version>1.9</Version>
     <RepositoryUrl>https://github.com/kakone/GoogleCast</RepositoryUrl>
     <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
     <PackageIcon>GoogleCast.png</PackageIcon>
